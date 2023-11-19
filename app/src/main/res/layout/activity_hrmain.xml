@@ -65,6 +65,7 @@
             app:layout_anchor="@id/hr_bottomAppBar"
             app:maxImageSize="40dp"
             android:id="@+id/hr_fab"
+            app:borderWidth="-1dp"
             app:tint="@color/lavender" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

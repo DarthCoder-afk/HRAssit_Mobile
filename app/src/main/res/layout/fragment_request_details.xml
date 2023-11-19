@@ -232,7 +232,7 @@
             android:orientation="horizontal">
 
             <!-- Button for Approve -->
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/approveButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -247,15 +247,14 @@
                 android:layout_height="match_parent" />
 
 
-            <Button
-
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/declineButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Decline"
                 android:background="@drawable/button_background_red"
-                android:textColor="@android:color/white" />
+                android:textColor="#FFFFFF" />
 
         </LinearLayout>
 
