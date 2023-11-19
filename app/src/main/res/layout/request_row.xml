@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RequestLayout"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="5dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="5dp">
+
+    <RelativeLayout
+        android:id="@+id/RequestsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp">
+
+        <TextView
+            android:id="@+id/RequestType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/Requestuserprofile"
+            android:text="Leave Form"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/RequestDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10/14/2023"
+            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:layout_marginStart="16dp"
+            android:layout_alignParentRight="true"/>
+
+        <ImageView
+            android:id="@+id/Requestuserprofile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/RequestDate"
+            android:layout_marginTop="11dp"
+            android:src="@drawable/user" />
+
+        <TextView
+            android:id="@+id/Employeenametxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pedro Batumbakal"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@+id/Requestuserprofile"
+            android:layout_marginStart="16dp"
+            android:layout_below="@+id/RequestDate"/>
+
+        <TextView
+            android:id="@+id/RequestEmployeeposistion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Employee"
+            android:textColor="@color/black"
+            android:layout_below="@+id/Employeenametxt"
+            android:layout_toRightOf="@+id/Requestuserprofile"
+            android:layout_marginStart="16dp"/>
+
+        <ImageView
+            android:id="@+id/ViewInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/Employeenametxt"
+            android:layout_alignBottom="@+id/Employeenametxt"
+            android:layout_marginEnd="101dp"
+            android:layout_marginBottom="-11dp"
+            android:src="@drawable/baseline_remove_red_eye_24"
+            app:tint="@color/lightgreen"/>
+
+        <ImageView
+            android:id="@+id/Approveinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/ViewInfo"
+            android:layout_alignBottom="@+id/Employeenametxt"
+            android:layout_marginEnd="-41dp"
+            android:layout_marginBottom="-12dp"
+            android:src="@drawable/baseline_check_24"
+            app:tint="@color/Green"/>
+
+        <ImageView
+            android:id="@+id/DeclineInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/Approveinfo"
+            android:layout_alignBottom="@+id/Employeenametxt"
+            android:layout_marginEnd="-41dp"
+            android:layout_marginBottom="-12dp"
+            android:src="@drawable/baseline_clear_24"
+            app:tint="@color/red" />
+
+
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

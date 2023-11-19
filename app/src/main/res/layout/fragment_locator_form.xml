@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    tools:context=".LocatorForm">
+
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/Green"
+        android:paddingBottom="6dp"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/textLocator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="146dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:text="Leave Form"
+            android:textColor="@color/white"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextPurpose"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/custom_input"
+        android:hint="Purpose"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.592"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+    <TextView
+        android:id="@+id/inclusivedates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextPurpose"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="24dp"
+        android:text="Inclusive Dates:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.167"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPurpose" />
+
+    <Button
+        android:id="@+id/buttonStartDateLocator"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/inclusivedates"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/spinner_border"
+        android:text="Start Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inclusivedates" />
+
+    <Button
+        android:id="@+id/buttonEndDateLocator"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/editTextPurpose"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_toEndOf="@+id/buttonStartDateLocator"
+        android:background="@drawable/spinner_border"
+        android:text="End Date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPurpose" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextHeadOfficerLocator"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/buttonStartDateLocator"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/custom_input"
+        android:hint="Head Officer"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLocator"
+        app:layout_constraintVertical_bias="0.002" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextReasonLocator"
+        android:layout_width="330dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/editTextHeadOfficerLocator"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/custom_input"
+        android:hint="Reason"
+        android:inputType="textLongMessage"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextHeadOfficerLocator"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/buttonSubmitlocator"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextReasonLocator"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:text="Submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.835"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextReasonLocator"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

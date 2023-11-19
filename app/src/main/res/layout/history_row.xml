@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/HistoryLayout"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="5dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="5dp">
+
+    <RelativeLayout
+        android:id="@+id/UserHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp">
+
+
+        <TextView
+            android:id="@+id/HistoryDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginRight="11dp"
+            android:text="10/14/2023"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
+
+        <ImageView
+            android:id="@+id/Historyicon"
+            android:layout_width="34dp"
+            android:layout_height="39dp"
+            android:layout_below="@+id/HistoryDate"
+            android:layout_marginTop="-5dp"
+            android:src="@drawable/baseline_history_24"
+            android:tint="@color/Green"
+            tools:ignore="UseAppTint" />
+
+        <TextView
+            android:id="@+id/Historycontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You approved a leave form"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@+id/Historyicon"
+            android:layout_marginStart="16dp"
+            android:layout_below="@+id/HistoryDate"/>
+
+
+
+
+
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

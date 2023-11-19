@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login"
+    android:gravity="center_vertical">
+
+  <TextView
+      android:id="@+id/WelcomeText"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Welcome to our Community!"
+      android:textAlignment="center"
+      android:textColor="@color/black"
+      android:textSize="20sp"
+      android:textStyle="bold"
+      android:layout_marginTop="32dp"
+      android:layout_centerHorizontal="true"/>
+
+  <ImageView
+      android:id="@+id/HrLogo"
+      android:layout_width="200dp"
+      android:layout_height="200dp"
+      android:layout_centerHorizontal="true"
+      android:contentDescription="@string/LogoDescription"
+      app:srcCompat="@drawable/logo2"
+      android:layout_below="@+id/WelcomeText"/>
+
+  <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/emailLayout"
+      style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/white"
+      android:layout_marginStart="32dp"
+      android:layout_marginEnd="32dp"
+      android:hint="Email"
+      app:startIconDrawable="@drawable/user"
+      android:layout_below="@+id/HrLogo">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/emailInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/passwordLayout"
+      style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/white"
+      android:layout_marginStart="32dp"
+      android:layout_marginEnd="32dp"
+      android:layout_marginTop="16dp"
+      android:hint="Password"
+      app:startIconDrawable="@drawable/baseline_lock_24"
+     android:layout_below="@+id/emailLayout">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/passwordInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <Button
+      android:id="@+id/LoginBtn"
+      android:layout_width="250dp"
+      android:layout_height="60dp"
+      android:layout_marginTop="32dp"
+      android:backgroundTint="@color/Green"
+      android:text="LOGIN"
+      android:textColor="@color/white"
+      android:textSize="20sp"
+      android:layout_below="@+id/passwordLayout"
+      android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

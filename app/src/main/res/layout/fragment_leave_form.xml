@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    tools:context=".LeaveFormFragment">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/Green"
+        android:paddingBottom="6dp"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/textLeave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="156dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:text="Leave Form"
+            android:textColor="@color/white"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textLeaveType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="32dp"
+        android:text="Leave Type: "
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+    <Spinner
+        android:id="@+id/spinnerLeaveType"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="32dp"
+        android:layout_toEndOf="@+id/textLeaveType"
+        android:background="@drawable/spinner_border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintStart_toEndOf="@+id/textLeaveType"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+    <TextView
+        android:id="@+id/inclusivedates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textLeaveType"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="28dp"
+        android:text="Inclusive Dates:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
+
+    <Button
+        android:id="@+id/buttonStartDateLeave"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/inclusivedates"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/spinner_border"
+        android:text="Start Date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.126"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inclusivedates" />
+
+    <Button
+        android:id="@+id/buttonEndDateLeave"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/spinnerLeaveType"
+        android:layout_marginTop="76dp"
+        android:layout_toEndOf="@+id/buttonStartDateLeave"
+        android:background="@drawable/spinner_border"
+        android:text="End Date"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.447"
+        app:layout_constraintStart_toEndOf="@+id/buttonStartDateLeave"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerLeaveType"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextHeadOfficer"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/buttonStartDateLeave"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/custom_input"
+        android:hint="Head Officer"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave"
+        app:layout_constraintVertical_bias="0.014" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextReason"
+        android:layout_width="330dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/editTextHeadOfficer"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:background="@drawable/custom_input"
+        android:hint="Reason"
+        android:inputType="textLongMessage"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.469"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextHeadOfficer"
+        app:layout_constraintVertical_bias="0.109" />
+
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextReason"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="192dp"
+        android:text="Submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.852"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextReason"
+        app:layout_constraintVertical_bias="0.702" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

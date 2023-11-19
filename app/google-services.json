@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "525625289094",
+    "project_id": "hrassist-lgusanvicente",
+    "storage_bucket": "hrassist-lgusanvicente.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525625289094:android:560d3ff0f63f5a4a43e407",
+        "android_client_info": {
+          "package_name": "com.example.bottomnavbar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxKaA4lwF_lwlCKRIrx8MyVk1go2X9Rbg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
