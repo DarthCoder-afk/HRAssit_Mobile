@@ -83,11 +83,12 @@
         android:layout_height="50dp"
         android:layout_below="@+id/editTextPurpose"
         android:layout_marginTop="60dp"
-        android:layout_marginEnd="60dp"
         android:layout_toEndOf="@+id/buttonStartDateLocator"
         android:background="@drawable/spinner_border"
         android:text="End Date"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.422"
+        app:layout_constraintStart_toEndOf="@+id/buttonStartDateLocator"
         app:layout_constraintTop_toBottomOf="@+id/editTextPurpose" />
 
     <com.google.android.material.textfield.TextInputEditText
