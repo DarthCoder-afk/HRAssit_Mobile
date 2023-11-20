@@ -1,5 +1,7 @@
 package com.example.bottomnavbar;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -7,10 +9,19 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +33,10 @@ import java.util.List;
  *
  */
 public class HomeFragment extends Fragment {
+    private TextView usernameText;
+    private TextView total_absentText;
+    private TextView total_pendingText;
+    private TextView total_leaveText;
     private RecyclerView recyclerView;
     private RecyclerviewAdapter recyclerviewAdapter;
     private List<EmployeeItem> employeeItemList;
@@ -66,10 +81,69 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        usernameText = view.findViewById(R.id.UsernameTxt);
+        total_absentText = view.findViewById(R.id.absentnumber);
+        total_pendingText = view.findViewById(R.id.pendingnumber);
+        total_leaveText = view.findViewById(R.id.remainingleavenumber);
+
+        // Replace this with the actual way you retrieve the user ID from the User Account collection
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user != null ? user.getUid() : null;
+
+        if (userID != null) {
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference requestFormsCollection = db.collection("Request Forms");
+
+
+            Query query = requestFormsCollection.whereEqualTo("user_id", userID);
+
+            query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+
+                int totalPendingForms = 0;
+                // Initialize your list of NotificationItems
+                employeeItemList = new ArrayList<>();
+
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    // Assuming your document structure, adjust this accordingly
+                    String date = document.getString("transaction_date");
+                    String employee_firstname = document.getString("first_name");
+                    String employee_lastname = document.getString("last_name");
+                    String request_type = document.getString("requestType");
+                    String position = document.getString("user_level");
+                    String status = document.getString("request_status");
+
+                    String fullName = employee_firstname + " " + employee_lastname;
+
+                    String purpose_text = String.format("You submitted a %s", request_type);
+
+                    employeeItemList.add(new EmployeeItem(date, R.drawable.user, fullName, position,purpose_text,status ));;
+
+                    if ("Pending".equals(status)) {
+                        totalPendingForms++;
+                    }
+
+                    usernameText.setText(employee_firstname);
+                    total_pendingText.setText(String.valueOf(totalPendingForms));
+
+                }
+
+                // Set up RecyclerView
+                recyclerView = view.findViewById(R.id.recyclerView);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                recyclerviewAdapter = new RecyclerviewAdapter(employeeItemList, getActivity());
+                recyclerView.setAdapter(recyclerviewAdapter);
+            }).addOnFailureListener(e -> {
+                // Handle failure, e.g., show an error message
+                Log.e(TAG, "Error getting documents: ", e);
+            });
+        }
 
         Button seeAllButton = view.findViewById(R.id.AllBtn);
         seeAllButton.setOnClickListener(new View.OnClickListener() {
@@ -79,18 +153,6 @@ public class HomeFragment extends Fragment {
                 replaceFragment(new HistoryFragment());
             }
         });
-
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        // Initialize your list of NotificationItems
-        employeeItemList = new ArrayList<>();
-        // Add sample data, replace this with your actual data
-        employeeItemList.add(new EmployeeItem("12/15/2023", R.drawable.user, "Dela Cruz, Juan", "HR", "Approved your sick leave on 10/07/1023", "Approved!"));
-        // Add more items as needed
-
-        recyclerviewAdapter = new RecyclerviewAdapter(employeeItemList, getActivity());
-        recyclerView.setAdapter(recyclerviewAdapter);
 
         return view;
     }

@@ -1,5 +1,7 @@
 package com.example.bottomnavbar;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
@@ -7,9 +9,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,22 +80,54 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user != null ? user.getUid() : null;
+        if (userID != null) {
 
-        //recyclerView = view.findViewById(R.id.recent_activity_recyclerview);
-
-        recyclerView = view.findViewById(R.id.notif);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        // Initialize your list of NotificationItems
-        notifItemList = new ArrayList<>();
-        // Add sample data, replace this with your actual data
-        notifItemList.add(new NotifItem("12/15/2023", "Leave form approved"));
-        notifItemList.add(new NotifItem("12/17/2023", "Pass Slip declined"));
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference requestFormsCollection = db.collection("Request Forms");
 
 
-        recyclerviewAdapter = new NotificationAdapter(notifItemList, getActivity());
-        recyclerView.setAdapter(recyclerviewAdapter);
+            Query query = requestFormsCollection.whereEqualTo("user_id", userID);
+
+            query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+
+                notifItemList = new ArrayList<>();
+
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    // Assuming your document structure, adjust this accordingly
+                    String date = document.getString("transaction_date");
+                    String request_type = document.getString("requestType");
+                    String status = document.getString("request_status");
+
+
+
+                    String approved_text = String.format("Your submitted %s", request_type,"was approved!");
+                    String declined_text = String.format("You submitted %s", request_type, "was declined");
+
+                    if ("Approve".equals(status)) {
+                        notifItemList.add(new NotifItem(date, approved_text));
+                    } else if ("Declined".equals(status)) {
+                        notifItemList.add(new NotifItem(date, declined_text));
+                    }
+
+
+                }
+
+                // Set up RecyclerView
+                recyclerView = view.findViewById(R.id.notif);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                recyclerviewAdapter = new NotificationAdapter(notifItemList, getActivity());
+                recyclerView.setAdapter(recyclerviewAdapter);
+            }).addOnFailureListener(e -> {
+                // Handle failure, e.g., show an error message
+                Log.e(TAG, "Error getting documents: ", e);
+            });
+        }
+
 
         return view;
     }
 }
+

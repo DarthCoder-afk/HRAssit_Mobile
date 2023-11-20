@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -178,47 +179,73 @@ public class LeaveFormFragment extends Fragment {
         String requestType = "Leave Form";
         String request_status = "Pending";
         String transaction_date = getCurrentDateTime();
-        String leaveType = spinnerLeaveType.getSelectedItem().toString();
+        String purpose = spinnerLeaveType.getSelectedItem().toString();
         String startDate = startdate.getText().toString();
         String endDate = enddate.getText().toString(); // Get the actual end date value
         String headOfficer = editTextHeadOfficer.getText().toString();
         String reason = editTextReason.getText().toString();
 
         // Validate input
-        if (isEmpty(leaveType) || isEmpty(startDate) || isEmpty(endDate) || isEmpty(headOfficer) || isEmpty(reason)) {
+        if (isEmpty(purpose) || isEmpty(startDate) || isEmpty(endDate) || isEmpty(headOfficer) || isEmpty(reason)) {
             showToast("Please fill in all fields");
             return;
         }
-
-        // Create a LeaveFormData object
-        LeaveFormData leaveFormData = new LeaveFormData();
-        leaveFormData.setRequestType(requestType);
-        leaveFormData.setLeaveType(leaveType);
-        leaveFormData.setStartDate(startDate);
-        leaveFormData.setEndDate(endDate);
-        leaveFormData.setHeadOfficer(headOfficer);
-        leaveFormData.setReason(reason);
-        leaveFormData.setRequest_status(request_status);
-        leaveFormData.setTransaction_date(transaction_date);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String userID = user.getUid();
             Log.d("UserID", "User ID: " + userID);
 
-            leaveFormData.setUser_id(userID);
-
+            // Query the User Account collection to get user details
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            CollectionReference requestFormsCollection = db.collection("Request Forms");
 
-            requestFormsCollection.add(leaveFormData)
-                    .addOnSuccessListener(aVoid -> {
-                        showToast("Leave form submitted successfully");
-                        clearFormFields();
-                        replaceFragment(new HistoryFragment());
+
+            db.collection("User Account")
+                    .whereEqualTo("userID", userID)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // The query contains at least one document
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+
+                            // Retrieve user details
+                            String first_name = documentSnapshot.getString("First_name");
+                            String last_name = documentSnapshot.getString("Last_name");
+                            String user_level = documentSnapshot.getString("UserLevel");
+
+                            // Create a RequestFormData object
+                            RequestFormData requestFormData = new RequestFormData();
+                            requestFormData.setRequestType(requestType);
+                            requestFormData.setPurpose(purpose);
+                            requestFormData.setStartDate(startDate);
+                            requestFormData.setEndDate(endDate);
+                            requestFormData.setHeadOfficer(headOfficer);
+                            requestFormData.setReason(reason);
+                            requestFormData.setRequest_status(request_status);
+                            requestFormData.setTransaction_date(transaction_date);
+                            requestFormData.setUser_id(userID);
+                            requestFormData.setFirst_name(first_name);
+                            requestFormData.setLast_name(last_name);
+                            requestFormData.setUser_level(user_level);
+
+                            // Add the request form to the Request Forms collection
+                            CollectionReference requestFormsCollection = db.collection("Request Forms");
+                            requestFormsCollection.add(requestFormData)
+                                    .addOnSuccessListener(aVoid -> {
+                                        showToast("Leave form submitted successfully");
+                                        clearFormFields();
+                                        replaceFragment(new HomeFragment());
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        showToast("Failed to submit leave form. Please try again.");
+                                    });
+                        } else {
+                            showToast("User details not found");
+                        }
                     })
                     .addOnFailureListener(e -> {
-                        showToast("Failed to submit leave form. Please try again.");
+                        showToast("Error retrieving user details");
+                        Log.e("Firestore", "Error retrieving user details", e);
                     });
         } else {
             showToast("User not authenticated");

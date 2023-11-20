@@ -1,5 +1,7 @@
 package com.example.bottomnavbar;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
@@ -7,9 +9,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,17 +82,42 @@ public class HistoryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_history, container, false);
 
-        recyclerView = view.findViewById(R.id.history);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user != null ? user.getUid() : null;
+        if (userID != null) {
 
-        // Initialize your list of NotificationItems
-        historyItemList = new ArrayList<>();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference requestFormsCollection = db.collection("Request Forms");
 
-        historyItemList.add(new HistoryItem("12/15/2023", "You submitted a leave form"));
 
-        recyclerviewAdapter = new HistoryAdapter(historyItemList, getActivity());
-        recyclerView.setAdapter(recyclerviewAdapter);
+            Query query = requestFormsCollection.whereEqualTo("user_id", userID);
 
+            query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+
+                // Initialize your list of NotificationItems
+                historyItemList = new ArrayList<>();
+
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    // Assuming your document structure, adjust this accordingly
+                    String date = document.getString("transaction_date");
+                    String request_type = document.getString("requestType");
+                    String purpose_text = String.format("You submitted a %s", request_type);
+                    historyItemList.add(new HistoryItem(date, purpose_text));;
+
+                }
+
+                // Set up RecyclerView
+                recyclerView = view.findViewById(R.id.history);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                recyclerviewAdapter = new HistoryAdapter(historyItemList, getActivity());
+                recyclerView.setAdapter(recyclerviewAdapter);
+            }).addOnFailureListener(e -> {
+                // Handle failure, e.g., show an error message
+                Log.e(TAG, "Error getting documents: ", e);
+            });
+        }
         return view;
-    }
 }
+}
+
