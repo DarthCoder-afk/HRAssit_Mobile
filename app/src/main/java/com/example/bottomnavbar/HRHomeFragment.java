@@ -1,5 +1,6 @@
 package com.example.bottomnavbar;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,8 @@ import java.util.Map;
 public class HRHomeFragment extends Fragment {
 
     private TextView usernameText;
+    private TextView total_applicantsText;
+    private TextView total_employeesText;
     private RecyclerView recyclerView;
     private RecyclerviewAdapter recyclerviewAdapter;
     private List<EmployeeItem> employeeItemList;
@@ -77,6 +80,7 @@ public class HRHomeFragment extends Fragment {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,6 +88,9 @@ public class HRHomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_h_r_home, container, false);
 
         usernameText = view.findViewById(R.id.HRUsernameTxt);
+        total_applicantsText = view.findViewById(R.id.applicant_number);
+        total_employeesText = view.findViewById(R.id.Employeenumber);
+
 
         // Assuming user is authenticated and UID is available
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -92,6 +99,36 @@ public class HRHomeFragment extends Fragment {
             Log.d("UID", "User UID: " + uid);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            //Counter for number of applicants
+            db.collection("Applicant Information")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+
+
+                            int numberOfApplicants = task.getResult().size();
+
+                            total_applicantsText.setText(String.valueOf(numberOfApplicants));
+
+                            Log.d("ApplicantCount", "Number of applicants: " + numberOfApplicants);
+                        } else {
+                            Log.e("Firestore", "Error getting documents: ", task.getException());
+                        }
+                    });
+            //Counter for number of employees
+            db.collection("Employee Information")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            int numberOfEmployees = task.getResult().size();
+                            total_employeesText.setText(String.valueOf(numberOfEmployees));
+                            Log.d("ApplicantCount", "Number of applicants: " + numberOfEmployees);
+                        } else {
+                            Log.e("Firestore", "Error getting documents: ", task.getException());
+                        }
+                    });
+
 
             // Use a query to find the document based on the user ID
             db.collection("User Account")
@@ -133,12 +170,14 @@ public class HRHomeFragment extends Fragment {
             showToast("User not authenticated");
         }
 
+
+
         Button seeAllButton = view.findViewById(R.id.AllBtn);
         seeAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Replace the current fragment with the HRHistory fragment
-                replaceFragment(new HRHistory());
+                replaceFragment(new HREmployeeRequests());
             }
         });
 

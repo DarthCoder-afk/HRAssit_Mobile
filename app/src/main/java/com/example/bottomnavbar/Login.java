@@ -87,6 +87,7 @@ public class Login extends AppCompatActivity {
                                 if ("Employee".equals(userLevel)) {
                                     Toast.makeText(Login.this, "Login successful (Employee).", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(Login.this, MainActivity.class));
+                                    Log.d("UID", "Employee UID: " + uid);
                                 } else if ("Admin".equals(userLevel)) {
                                     Toast.makeText(Login.this, "Login successful (Admin).", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(Login.this, HRAdminMainActivity.class));

@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="215dp"
+            android:layout_marginEnd="180dp"
             android:layout_toStartOf="@+id/HRUsernameTxt"
             android:text="Greetings!"
             android:textAlignment="center"
@@ -57,43 +57,7 @@
             android:layout_marginBottom="20dp"
             android:orientation="horizontal">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/employee_pending_request"
-                android:layout_width="170dp"
-                android:layout_height="170dp"
-                android:layout_below="@id/HRUsernameTxt"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="31dp"
-                android:backgroundTint="@color/Green"
-                app:cardCornerRadius="10dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/PendingRequestTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pending Requests"
-                        android:textColor="#F4F4F4"
-                        android:textSize="17dp" />
-
-                    <TextView
-                        android:id="@+id/PendingRequestNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="10"
-                        android:textColor="#F4F4F4"
-                        android:textSize="30dp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/TotalApplicant"
@@ -126,7 +90,7 @@
                         android:textSize="17dp" />
 
                     <TextView
-                        android:id="@+id/absentnumber"
+                        android:id="@+id/applicant_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="20"
@@ -174,6 +138,44 @@
                         android:textColor="#F4F4F4"
                         android:textSize="30dp"
                         android:textStyle="bold" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/employee_pending_request"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_below="@id/HRUsernameTxt"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="-1dp"
+                android:layout_marginTop="31dp"
+                android:backgroundTint="@color/Green"
+                app:cardCornerRadius="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/PendingRequestTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pending Requests"
+                        android:textColor="#F4F4F4"
+                        android:textSize="17dp" />
+
+                    <TextView
+                        android:id="@+id/PendingRequestNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="#F4F4F4"
+                        android:textSize="30dp"
+                        android:textStyle="bold" />
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
