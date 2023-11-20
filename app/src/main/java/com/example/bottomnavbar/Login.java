@@ -2,6 +2,7 @@ package com.example.bottomnavbar;
 
 import  android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -89,6 +90,7 @@ public class Login extends AppCompatActivity {
                                 } else if ("Admin".equals(userLevel)) {
                                     Toast.makeText(Login.this, "Login successful (Admin).", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(Login.this, HRAdminMainActivity.class));
+                                    Log.d("UID", "LOGIN UID: " + uid);
                                 } else {
                                     Toast.makeText(Login.this, "Unknown UserLevel.", Toast.LENGTH_SHORT).show();
                                 }

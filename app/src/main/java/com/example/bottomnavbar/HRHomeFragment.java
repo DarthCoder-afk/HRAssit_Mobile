@@ -8,13 +8,22 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +32,7 @@ import java.util.List;
  */
 public class HRHomeFragment extends Fragment {
 
+    private TextView usernameText;
     private RecyclerView recyclerView;
     private RecyclerviewAdapter recyclerviewAdapter;
     private List<EmployeeItem> employeeItemList;
@@ -73,11 +83,61 @@ public class HRHomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_h_r_home, container, false);
 
+        usernameText = view.findViewById(R.id.HRUsernameTxt);
+
+        // Assuming user is authenticated and UID is available
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            Log.d("UID", "User UID: " + uid);
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // Use a query to find the document based on the user ID
+            db.collection("User Account")
+                    .whereEqualTo("userID", uid) // Assuming there's a field "UserID" in your documents
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            String documentId = queryDocumentSnapshots.getDocuments().get(0).getId();
+                            showToast("Document ID: " + documentId);
+                            Log.d("DID", "Document DID: " + documentId);
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+
+                            // Retrieve the username from the nested field "Account_Information"
+                            Map<String, Object> accountInfo = (Map<String, Object>) documentSnapshot.get("Account_Information");
+                            if (accountInfo != null) {
+                                String username = (String) accountInfo.get("Username");
+
+
+                                usernameText.setText(username);
+                                Log.d("Username", "Retrieved username: " + username);
+
+
+                                showToast("Username loaded successfully");
+                            } else {
+
+                                showToast("No username found in Account Information");
+                            }
+                        } else {
+
+                            showToast("No document found for the user ID: " + uid);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+
+                        showToast("Failed to load username. Please try again.");
+                    });
+        } else {
+            // Handle case where user is not authenticated
+            showToast("User not authenticated");
+        }
+
         Button seeAllButton = view.findViewById(R.id.AllBtn);
         seeAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Replace the current fragment with the RecentActivityFragment
+                // Replace the current fragment with the HRHistory fragment
                 replaceFragment(new HRHistory());
             }
         });
@@ -104,5 +164,11 @@ public class HRHomeFragment extends Fragment {
         fragmentTransaction.replace(R.id.hr_frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);  // Optional: Add to back stack if needed
         fragmentTransaction.commit();
+    }
+
+    private void showToast(String message) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 }
