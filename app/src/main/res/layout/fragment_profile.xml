@@ -29,7 +29,7 @@
                 android:background="@drawable/circle"
                 android:padding="3dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/pics" />
+                android:src="@drawable/employee" />
 
         </RelativeLayout>
 
@@ -41,7 +41,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15sp"
             android:fontFamily="sans-serif-light"
-            android:text="Juan Dela Cruz"
+            android:text="Your Name"
             android:textColor="@color/white"
             android:textSize="32sp" />
 
@@ -142,7 +142,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:text="juandelacruz@gmail.com"
+                    android:text="youremail@gmail.com"
                     android:textColor="#000000"
                     android:textSize="18sp" />
 

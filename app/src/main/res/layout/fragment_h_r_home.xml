@@ -71,9 +71,15 @@
                 android:layout_marginTop="31dp"
                 android:layout_toRightOf="@+id/remainingLeave"
 
-                android:backgroundTint="@color/Green"
+                android:backgroundTint="#4CC257"
                 app:cardCornerRadius="10dp"
                 tools:ignore="ObsoleteLayoutParam,RtlHardcoded">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/baseline_person_24"
+                    android:layout_marginTop="75dp"
+                    android:layout_marginLeft="35dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -95,6 +101,7 @@
                         android:layout_height="wrap_content"
                         android:text="20"
                         android:textColor="#F4F4F4"
+                        android:layout_marginLeft="15dp"
                         android:textSize="30dp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -110,11 +117,18 @@
 
                 android:layout_marginLeft="48dp"
                 android:layout_marginTop="31dp"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="22dp"
                 android:layout_toRightOf="@+id/remainingLeave"
                 android:backgroundTint="@color/yellow"
                 app:cardCornerRadius="10dp"
                 tools:ignore="ObsoleteLayoutParam,RtlHardcoded">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_groups_24"
+                    android:layout_marginTop="70dp"
+                    android:layout_marginLeft="22dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -135,9 +149,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="300"
+                        android:layout_marginLeft="25dp"
                         android:textColor="#F4F4F4"
                         android:textSize="30dp"
                         android:textStyle="bold" />
+
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -148,10 +165,19 @@
                 android:layout_height="170dp"
                 android:layout_below="@id/HRUsernameTxt"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="-1dp"
                 android:layout_marginTop="31dp"
-                android:backgroundTint="@color/red"
+                android:layout_marginEnd="22dp"
+                android:backgroundTint="#C11818"
                 app:cardCornerRadius="10dp">
+
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/baseline_insert_drive_file_24"
+                    android:layout_marginTop="75dp"
+                    android:layout_marginLeft="35dp"
+                    app:tint="@color/white" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -174,6 +200,7 @@
                         android:text="10"
                         android:textColor="#F4F4F4"
                         android:textSize="30dp"
+                        android:layout_marginLeft="25dp"
                         android:textStyle="bold" />
 
                 </LinearLayout>

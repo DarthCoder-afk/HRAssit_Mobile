@@ -63,7 +63,7 @@ public class LeaveFormFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private static final String[] LEAVE_TYPES = {"Sick Leave", "Vacation Leave", "Bereavement", "Other"};
+    private static final String[] LEAVE_TYPES = {"Annual Leave","Sick Leave", "Vacation Leave", "Bereavement Leave", "Other"};
 
     public LeaveFormFragment() {
         // Required empty public constructor

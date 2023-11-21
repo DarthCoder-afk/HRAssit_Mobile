@@ -44,7 +44,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15sp"
             android:fontFamily="sans-serif-light"
-            android:text="Juan De la Cruz"
+            android:text="Employee Name"
             android:textColor="@color/white"
             android:textSize="32sp" />
 
