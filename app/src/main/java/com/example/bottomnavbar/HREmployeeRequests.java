@@ -7,9 +7,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,20 +77,42 @@ public class HREmployeeRequests extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_h_r_employee_requests, container, false);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
 
-        //recyclerView = view.findViewById(R.id.recent_activity_recyclerview);
-        recyclerView = view.findViewById(R.id.request_form);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Initialize your list of NotificationItems
-        requestItemList = new ArrayList<>();
-        // Add sample data, replace this with your actual data
-        requestItemList.add(new RequestItem("12/15/2023", R.drawable.user, "Dela Cruz, Juan", "Employee","Leave Form"));
-        requestItemList.add(new RequestItem("12/17/2023", R.drawable.user, "Pedro Batumbakal", "Employee","Pass Slip"));
+            db.collection("Request Forms")
+                    .whereEqualTo("request_status", "Pending")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            requestItemList = new ArrayList<>();
 
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-        recyclerviewAdapter = new RequestRecyclerViewAdapter(requestItemList, getActivity());
-        recyclerView.setAdapter(recyclerviewAdapter);
+                                String date = document.getString("transaction_date");
+                                String request_type = document.getString("requestType");
+                                String status = document.getString("request_status");
+                                String employee_firstname = document.getString("first_name");
+                                String employee_lastname = document.getString("last_name");
+                                String position = document.getString("user_level");
+
+                                String fullName = employee_firstname + " " + employee_lastname;
+
+                                requestItemList.add(new RequestItem(date,R.drawable.user,fullName,position, request_type));
+                            }
+                            recyclerView = view.findViewById(R.id.request_form);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                            recyclerviewAdapter = new RequestRecyclerViewAdapter(requestItemList, getActivity());
+                            recyclerView.setAdapter(recyclerviewAdapter);
+
+                        } else {
+                            Log.e("Firestore", "Error getting documents: ", task.getException());
+                        }
+                    });
+        }
 
         return view;
     }

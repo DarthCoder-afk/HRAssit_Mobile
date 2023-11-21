@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,8 @@ public class HRHomeFragment extends Fragment {
     private TextView usernameText;
     private TextView total_applicantsText;
     private TextView total_employeesText;
+
+    private TextView total_pendingformsText;
     private RecyclerView recyclerView;
     private RecyclerviewAdapter recyclerviewAdapter;
     private List<EmployeeItem> employeeItemList;
@@ -90,9 +93,9 @@ public class HRHomeFragment extends Fragment {
         usernameText = view.findViewById(R.id.HRUsernameTxt);
         total_applicantsText = view.findViewById(R.id.applicant_number);
         total_employeesText = view.findViewById(R.id.Employeenumber);
+        total_pendingformsText = view.findViewById(R.id.PendingRequestNumber);
 
 
-        // Assuming user is authenticated and UID is available
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String uid = user.getUid();
@@ -123,7 +126,20 @@ public class HRHomeFragment extends Fragment {
                         if (task.isSuccessful()) {
                             int numberOfEmployees = task.getResult().size();
                             total_employeesText.setText(String.valueOf(numberOfEmployees));
-                            Log.d("ApplicantCount", "Number of applicants: " + numberOfEmployees);
+                            Log.d("Employee Count", "Number of Employees: " + numberOfEmployees);
+                        } else {
+                            Log.e("Firestore", "Error getting documents: ", task.getException());
+                        }
+                    });
+
+            //Counter for number of employees
+            db.collection("Request Forms")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            int numberOfRequests = task.getResult().size();
+                            total_pendingformsText.setText(String.valueOf(numberOfRequests));
+                            Log.d("Request Forms Count", "Number of request forms: " + numberOfRequests);
                         } else {
                             Log.e("Firestore", "Error getting documents: ", task.getException());
                         }
@@ -165,6 +181,37 @@ public class HRHomeFragment extends Fragment {
 
                         showToast("Failed to load username. Please try again.");
                     });
+
+            db.collection("Request Forms")
+                    .whereEqualTo("request_status", "Pending")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            employeeItemList = new ArrayList<>();
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String date = document.getString("transaction_date");
+                                String employee_firstname = document.getString("first_name");
+                                String employee_lastname = document.getString("last_name");
+                                String request_type = document.getString("requestType");
+                                String position = document.getString("user_level");
+                                String status = document.getString("request_status");
+
+                                String fullName = employee_firstname + " " + employee_lastname;
+                                String purpose_text = String.format("An employee submitted a %s", request_type);
+
+                                employeeItemList.add(new EmployeeItem(date, R.drawable.user, fullName, position, purpose_text, status));
+                            }
+                            recyclerView = view.findViewById(R.id.recyclerView);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                            recyclerviewAdapter = new RecyclerviewAdapter(employeeItemList, getActivity());
+                            recyclerView.setAdapter(recyclerviewAdapter);
+
+                        } else {
+                            Log.e("Firestore", "Error getting documents: ", task.getException());
+                        }
+                    });
         } else {
             // Handle case where user is not authenticated
             showToast("User not authenticated");
@@ -181,18 +228,7 @@ public class HRHomeFragment extends Fragment {
             }
         });
 
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // Initialize your list of NotificationItems
-        employeeItemList = new ArrayList<>();
-        // Add sample data, replace this with your actual data
-        employeeItemList.add(new EmployeeItem("12/15/2023", R.drawable.user, "Dela Cruz, Juan", "Employee", "Applied for Sick Leave", "To be Approved"));
-        // Add more items as needed
-        employeeItemList.add(new EmployeeItem("11/12/2023", R.drawable.user, "Pedro Batumbakal", "Employee", "Applied for Vacation Leave", "Already Approved"));
-
-        recyclerviewAdapter = new RecyclerviewAdapter(employeeItemList, getActivity());
-        recyclerView.setAdapter(recyclerviewAdapter);
 
         return view;
     }

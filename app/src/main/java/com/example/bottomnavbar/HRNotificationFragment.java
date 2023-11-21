@@ -1,5 +1,7 @@
 package com.example.bottomnavbar;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
@@ -7,9 +9,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,20 +81,39 @@ public class HRNotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_h_r_notification, container, false);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
 
-        //recyclerView = view.findViewById(R.id.recent_activity_recyclerview);
-        recyclerView = view.findViewById(R.id.hrnotif);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Initialize your list of NotificationItems
-        notifItemList = new ArrayList<>();
-        // Add sample data, replace this with your actual data
-        notifItemList.add(new NotifItem("12/15/2023", "An employee submitted a Leave form"));
-        notifItemList.add(new NotifItem("12/17/2023", "An employee submitted a Locator form"));
+            db.collection("Request Forms")
+                    .whereEqualTo("request_status", "Pending")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            notifItemList = new ArrayList<>();
 
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String date = document.getString("transaction_date");
+                                String request_type = document.getString("requestType");
+                                String status = document.getString("request_status");
 
-        recyclerviewAdapter = new NotificationAdapter(notifItemList, getActivity());
-        recyclerView.setAdapter(recyclerviewAdapter);
+                                String pending_text = String.format("An employee submitted a %s", request_type);
+
+                                notifItemList.add(new NotifItem(date, pending_text));
+                            }
+                            recyclerView = view.findViewById(R.id.hrnotif);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                            recyclerviewAdapter = new NotificationAdapter(notifItemList, getActivity());
+                            recyclerView.setAdapter(recyclerviewAdapter);
+
+                        } else {
+                            Log.e("Firestore", "Error getting documents: ", task.getException());
+                        }
+                    });
+        }
+
 
         return view;
     }
