@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -21,8 +22,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,10 +91,9 @@ public class HistoryFragment extends Fragment {
         if (userID != null) {
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            CollectionReference requestFormsCollection = db.collection("Request Forms");
+            CollectionReference requestFormsCollection = db.collection("Request Information");
 
-
-            Query query = requestFormsCollection.whereEqualTo("user_id", userID);
+            Query query = requestFormsCollection.whereEqualTo("employeeDocID", userID);
 
             query.get().addOnSuccessListener(queryDocumentSnapshots -> {
 
@@ -98,11 +101,24 @@ public class HistoryFragment extends Fragment {
                 historyItemList = new ArrayList<>();
 
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    // Assuming your document structure, adjust this accordingly
-                    String date = document.getString("transaction_date");
-                    String request_type = document.getString("requestType");
-                    String purpose_text = String.format("You submitted a %s", request_type);
-                    historyItemList.add(new HistoryItem(date, purpose_text));;
+                    Timestamp timestamp = document.getTimestamp("createdAt");
+                    Date date = timestamp != null ? timestamp.toDate() : null;
+                    String dateString = date != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date) : "";
+                    Log.d(TAG, "Document ID: " + document.getId());
+                    // Extract data from the document
+
+                    String request_type = document.getString("RequestType");
+                    //String position = document.getString("request_Details.UserLevel");
+                    String status = document.getString("RequestStatus");
+
+
+
+                    // Assuming you have a nested "Request_Details" field, adjust accordingly
+                    Map<String, Object> requestDetails = (Map<String, Object>) document.get("Request_Details");
+                    String leaveType = requestDetails != null ? (String) requestDetails.get("LeaveType") : "";
+
+                    String purpose_text = String.format("You submitted a %s - %s", request_type, leaveType);
+                    historyItemList.add(new HistoryItem(dateString, purpose_text));;
 
                 }
 

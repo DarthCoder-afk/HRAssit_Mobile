@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,242 +7,259 @@
 
     tools:context=".SickLeaveFragment">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/inhospitalspecify"
-        android:layout_width="147dp"
-        android:layout_height="26dp"
-
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/custom_input"
-        android:hint="Specify Illness"
-        android:paddingLeft="10dp"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.877"
-        app:layout_constraintStart_toEndOf="@+id/radioGroup3"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/outpatientspecify"
-        android:layout_width="147dp"
-        android:layout_height="26dp"
-
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="28dp"
-        android:background="@drawable/custom_input"
-        android:hint="Specify Illness"
-        android:paddingLeft="10dp"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.926"
-        app:layout_constraintStart_toEndOf="@+id/radioGroup3"
-        app:layout_constraintTop_toBottomOf="@+id/inhospitalspecify" />
-
-    <Button
-        android:id="@+id/uploadimage"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-
-        android:layout_alignParentStart="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="Upload image"
-        android:textSize="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.109"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/attachments_text"
-        tools:ignore="MissingConstraints" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/file_details"
-        android:layout_width="178dp"
-        android:layout_height="39dp"
-
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="260dp"
-
-        android:background="@drawable/custom_input"
-        android:paddingLeft="10dp"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.866"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave" />
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/Green"
-        android:paddingBottom="6dp"
-        tools:ignore="MissingConstraints">
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inhospitalspecify"
+            android:layout_width="147dp"
+            android:layout_height="26dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/custom_input"
+            android:hint="Specify Illness"
+            android:paddingLeft="10dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/file_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.666"
+            app:layout_constraintStart_toEndOf="@+id/radioGroup3"
+            app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave"
+            app:layout_constraintVertical_bias="0.045" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/outpatientspecify"
+            android:layout_width="147dp"
+            android:layout_height="26dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/custom_input"
+            android:hint="Specify Illness"
+            android:paddingLeft="10dp"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.731"
+            app:layout_constraintStart_toEndOf="@+id/radioGroup3"
+            app:layout_constraintTop_toBottomOf="@+id/inhospitalspecify" />
+
+        <Button
+            android:id="@+id/uploadimage"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:text="Upload"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.079"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attachments_text"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="MissingConstraints" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/file_details"
+            android:layout_width="178dp"
+            android:layout_height="39dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/custom_input"
+
+            android:enabled="false"
+            android:paddingLeft="10dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.444"
+            app:layout_constraintStart_toEndOf="@+id/uploadimage"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup3"
+            app:layout_constraintVertical_bias="0.53" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/Green"
+            android:paddingBottom="6dp"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/textLeave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="153dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="8dp"
+                android:text="Leave Form"
+                app:fontFamily=" "
+                android:textColor="@color/white"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/textLeave"
+            android:id="@+id/textLeaveType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="129dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            android:text="Sick Leave Form"
-            android:textColor="@color/white"
-            android:textSize="21sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="32dp"
+            android:text="Leave Type: "
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
-    </RelativeLayout>
+        <Spinner
+            android:id="@+id/spinnerLeaveType"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="32dp"
+            android:layout_toEndOf="@+id/textLeaveType"
+            android:background="@drawable/spinner_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.428"
+            app:layout_constraintStart_toEndOf="@+id/textLeaveType"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
-    <TextView
-        android:id="@+id/textLeaveType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="32dp"
-        android:text="Leave Type: "
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+        <TextView
+            android:id="@+id/inclusivedates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textLeaveType"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="32dp"
+            android:text="Inclusive Dates:"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.132"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
 
-    <Spinner
-        android:id="@+id/spinnerLeaveType"
-        android:layout_width="200dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="32dp"
-        android:layout_toEndOf="@+id/textLeaveType"
-        android:background="@drawable/spinner_border"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
-        app:layout_constraintStart_toEndOf="@+id/textLeaveType"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
-
-    <TextView
-        android:id="@+id/inclusivedates"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textLeaveType"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:text="Inclusive Dates:"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
-
-    <TextView
-        android:id="@+id/incaseText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textLeaveType"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="152dp"
-        android:text="Details of Leave:"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
+        <TextView
+            android:id="@+id/incaseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textLeaveType"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="152dp"
+            android:text="Details of Leave:"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
 
 
-    <RadioGroup
-        android:id="@+id/radioGroup3"
-        android:layout_width="131dp"
-        android:layout_height="108dp"
-        app:layout_constraintBottom_toTopOf="@+id/attachments_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.228"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/incaseText"
-        app:layout_constraintVertical_bias="0.309"
-        tools:ignore="MissingConstraints">
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/inhospitalbutton"
-            android:layout_width="126dp"
-            android:layout_height="41dp"
-            android:layout_marginTop="20dp"
-            android:text="In Hospital"
+        <RadioGroup
+            android:id="@+id/radioGroup3"
+            android:layout_width="131dp"
+            android:layout_height="108dp"
+            app:layout_constraintBottom_toTopOf="@+id/attachments_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.228"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/incaseText"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintVertical_bias="0.309"
+            tools:ignore="MissingConstraints">
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/outpatientbutton"
-            android:layout_width="127dp"
-            android:layout_height="41dp"
-            android:text="Out Patient"
-            app:layout_constraintBottom_toTopOf="@+id/attachments_text"
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/inhospitalbutton"
+                android:layout_width="126dp"
+                android:layout_height="41dp"
+                android:layout_marginTop="20dp"
+                android:text="In Hospital"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/incaseText"
+                tools:ignore="MissingConstraints" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/outpatientbutton"
+                android:layout_width="127dp"
+                android:layout_height="41dp"
+                android:text="Out Patient"
+                app:layout_constraintBottom_toTopOf="@+id/attachments_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inhospitalbutton"
+                app:layout_constraintVertical_bias="0.464"
+                tools:ignore="MissingConstraints" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/attachments_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textLeaveType"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="204dp"
+            android:text="Attachments: "
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inhospitalbutton"
-            app:layout_constraintVertical_bias="0.464"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonStartDateLeave" />
 
-    </RadioGroup>
+        <Button
+            android:id="@+id/buttonStartDateLeave"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/inclusivedates"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/spinner_border"
+            android:text="Start Date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.126"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inclusivedates" />
 
-    <TextView
-        android:id="@+id/attachments_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textLeaveType"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="204dp"
-        android:text="Attachments: "
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonStartDateLeave" />
+        <Button
+            android:id="@+id/buttonEndDateLeave"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/spinnerLeaveType"
+            android:layout_toEndOf="@+id/buttonStartDateLeave"
+            android:background="@drawable/spinner_border"
+            android:text="End Date"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.243"
+            app:layout_constraintStart_toEndOf="@+id/buttonStartDateLeave"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerLeaveType"
+            app:layout_constraintVertical_bias="0.156" />
 
-    <Button
-        android:id="@+id/buttonStartDateLeave"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/inclusivedates"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/spinner_border"
-        android:text="Start Date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.126"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inclusivedates" />
+        <Button
+            android:id="@+id/buttonSubmit"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
 
-    <Button
-        android:id="@+id/buttonEndDateLeave"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/spinnerLeaveType"
-        android:layout_toEndOf="@+id/buttonStartDateLeave"
-        android:background="@drawable/spinner_border"
-        android:text="End Date"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.448"
-        app:layout_constraintStart_toEndOf="@+id/buttonStartDateLeave"
-        app:layout_constraintTop_toBottomOf="@+id/inclusivedates"
-        app:layout_constraintVertical_bias="0.054" />
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="28dp"
+            android:text="Submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.797"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/file_details"
+            app:layout_constraintVertical_bias="1.0" />
 
-    <Button
-        android:id="@+id/buttonSubmit"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-
-        android:layout_alignParentStart="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"
-        android:text="Submit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.814"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/file_details" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

@@ -15,16 +15,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +47,8 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerviewAdapter recyclerviewAdapter;
     private List<EmployeeItem> employeeItemList;
+
+    private String fullName;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,6 +95,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        // Initialize views
         usernameText = view.findViewById(R.id.UsernameTxt);
         total_absentText = view.findViewById(R.id.absentnumber);
         total_pendingText = view.findViewById(R.id.pendingnumber);
@@ -96,41 +106,37 @@ public class HomeFragment extends Fragment {
         String userID = user != null ? user.getUid() : null;
 
         if (userID != null) {
-
+            // Initialize Firestore
             FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // Query to get request forms
             CollectionReference requestFormsCollection = db.collection("Request Information");
-
-
-            Query query = requestFormsCollection.whereEqualTo("user_id", userID);
+            Query query = requestFormsCollection.whereEqualTo("employeeDocID", userID);
 
             query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-
                 int totalPendingForms = 0;
-                // Initialize your list of NotificationItems
                 employeeItemList = new ArrayList<>();
 
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    // Assuming your document structure, adjust this accordingly
-                    String date = document.getString("transaction_date");
-                    String employee_firstname = document.getString("first_name");
-                    String employee_lastname = document.getString("last_name");
-                    String request_type = document.getString("requestType");
-                    String position = document.getString("user_level");
-                    String status = document.getString("request_status");
+                    // Extract data from the document
+                    Timestamp timestamp = document.getTimestamp("createdAt");
+                    Date date = timestamp != null ? timestamp.toDate() : null;
+                    String dateString = date != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date) : "";
 
-                    String fullName = employee_firstname + " " + employee_lastname;
+                    String request_type = document.getString("RequestType");
+                    String status = document.getString("RequestStatus");
 
-                    String purpose_text = String.format("You submitted a %s", request_type);
+                    // Assuming you have a nested "Request_Details" field, adjust accordingly
+                    Map<String, Object> requestDetails = (Map<String, Object>) document.get("Request_Details");
+                    String leaveType = requestDetails != null ? (String) requestDetails.get("LeaveType") : "";
 
-                    employeeItemList.add(new EmployeeItem(date, R.drawable.user, fullName, position,purpose_text,status ));;
+                    String purpose_text = String.format("You submitted a %s - %s", request_type, leaveType);
+
+                    employeeItemList.add(new EmployeeItem(dateString, R.drawable.user, fullName, "Employee", purpose_text, status));
 
                     if ("Pending".equals(status)) {
                         totalPendingForms++;
                     }
-
-                    usernameText.setText(employee_firstname);
-                    total_pendingText.setText(String.valueOf(totalPendingForms));
-
                 }
 
                 // Set up RecyclerView
@@ -139,20 +145,101 @@ public class HomeFragment extends Fragment {
 
                 recyclerviewAdapter = new RecyclerviewAdapter(employeeItemList, getActivity());
                 recyclerView.setAdapter(recyclerviewAdapter);
+
+                // Update total pending text
+                total_pendingText.setText(String.valueOf(totalPendingForms));
             }).addOnFailureListener(e -> {
                 // Handle failure, e.g., show an error message
                 Log.e(TAG, "Error getting documents: ", e);
             });
+
+            // Query to get user information from "User Account" collection
+            db.collection("User Account")
+                    .whereEqualTo("userID", userID)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                            Log.d(TAG,"User id"+userID);
+
+                            // Retrieve the document ID for "Employee Information"
+                            String documentID = (String) documentSnapshot.get("documentID");
+                            Log.d(TAG,"User acc docid"+documentID);
+
+                            // Query to get employee information from "Employee Information" collection
+                            db.collection("Employee Information")
+                                    .whereEqualTo("accountID", documentID)
+                                    .get()
+                                    .addOnSuccessListener(employeeDocuments -> {
+                                        if (!employeeDocuments.isEmpty()) {
+                                            DocumentSnapshot employeeDocument = employeeDocuments.getDocuments().get(0);
+
+                                            String documentID2 = (String) employeeDocument.get("documentID");
+                                            Log.d(TAG,"Emplyee doc id"+documentID2);
+
+                                            // Retrieve data from the "Employee Information" document
+                                            Map<String, Object> personalInfo = (Map<String, Object>) employeeDocument.get("Personal_Information");
+                                            if (personalInfo != null) {
+                                                String firstName = (String) personalInfo.get("FirstName");
+                                                String surname = (String) personalInfo.get("SurName");
+                                                String userLevel = (String) personalInfo.get("UserLevel");
+
+                                                // Use retrieved data as needed
+                                                fullName = firstName + " " + surname;
+                                                usernameText.setText(fullName);
+
+                                                showToast("Employee information loaded successfully");
+                                            } else {
+                                                showToast("No personal information found in Employee Information");
+                                            }
+                                        } else {
+                                            showToast("Employee Information document does not exist");
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        showToast("Failed to load employee information. Please try again.");
+                                    });
+
+                            // Query to get information from "201File Information" collection
+                            db.collection("201File Information")
+                                    .whereEqualTo("employeeDocID", documentID)
+                                    .get()
+                                    .addOnSuccessListener(employeeDocuments2 -> {
+                                        for (QueryDocumentSnapshot employeeDocument : employeeDocuments2) {
+                                            // Retrieve data from each "201File Information" document
+                                            Map<String, Object> appointmentDetails = (Map<String, Object>) employeeDocument.get("Appointment_Details");
+                                            if (appointmentDetails != null) {
+                                                String startingDate = (String) appointmentDetails.get("DateOfSigning");
+                                                Log.d(TAG, "Starting Date: " + startingDate);
+                                                showToast("Appoointment Details" + startingDate);
+                                            } else {
+                                                showToast("No appointment details found in 201File Information");
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        showToast("Failed to load 201File information. Please try again.");
+                                    });
+                        } else {
+                            showToast("No document found for the user ID: " + userID);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        showToast("Failed to load user information. Please try again.");
+                    });
+
+            Button seeAllButton = view.findViewById(R.id.AllBtn);
+            seeAllButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Replace the current fragment with the RecentActivityFragment
+                    replaceFragment(new HistoryFragment());
+                }
+            });
+
         }
 
-        Button seeAllButton = view.findViewById(R.id.AllBtn);
-        seeAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Replace the current fragment with the RecentActivityFragment
-                replaceFragment(new HistoryFragment());
-            }
-        });
+        // ... (rest of your code)
 
         return view;
     }
@@ -163,6 +250,12 @@ public class HomeFragment extends Fragment {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);  // Optional: Add to back stack if needed
         fragmentTransaction.commit();
+    }
+
+    private void showToast(String message) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

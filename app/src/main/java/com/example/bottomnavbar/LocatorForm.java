@@ -31,12 +31,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -204,13 +208,12 @@ public class LocatorForm extends Fragment {
 
     private void saveLeaveFormToFirestore() {
         // Get values from UI elements
-        String requestType = "Locator Form";
-        String request_status = "Pending";
-        String transaction_date = getCurrentDateTime();
+        String requestType = "Pass Slip Leave";
+        String requestStatus = "Pending";
+        String transactionDate = getCurrentDateTime();
         String purpose = editTextPurpose.getText().toString();
         String startDate = startdate.getText().toString();
-        String endDate = enddate.getText().toString(); // Get the actual end date value
-
+        String endDate = enddate.getText().toString();
 
         // Validate input
         if (isEmpty(purpose) || isEmpty(startDate) || isEmpty(endDate)) {
@@ -223,32 +226,19 @@ public class LocatorForm extends Fragment {
             String userID = user.getUid();
             Log.d("UserID", "User ID: " + userID);
 
-            // Query the User Account collection to get user details
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            // Create a StorageReference for the file
             String fileName = getFileName(fileUri);
             StorageReference fileReference = FirebaseStorage.getInstance().getReference().child("uploads/" + fileName);
 
-
+            // Upload the file to Firebase Storage
             fileReference.putFile(fileUri)
                     .addOnSuccessListener(taskSnapshot -> {
-
                         fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                             String fileUrl = uri.toString();
 
-                            RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
-                            int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
-                            String status;
-
-                            if (selectedRadioButtonId == R.id.officialbutton) {
-                                status = "Official";
-                            } else if (selectedRadioButtonId == R.id.personalbutton) {
-                                status = "Personal";
-                            } else {
-                                // Handle the case where no radio button is selected
-                                showToast("Please select a status");
-                                return;
-                            }
+                            Map<String, Object> leaveDetailsMap = new HashMap<>();
 
                             // Query the User Account collection to get user details
                             db.collection("User Account")
@@ -256,33 +246,58 @@ public class LocatorForm extends Fragment {
                                     .get()
                                     .addOnSuccessListener(queryDocumentSnapshots -> {
                                         if (!queryDocumentSnapshots.isEmpty()) {
-                                            // The query contains at least one document
+                                            // User details found
                                             DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                                            String user_level = documentSnapshot.getString("UserLevel");
+                                            String userLevel = documentSnapshot.getString("UserLevel");
 
-                                            // Create a RequestFormData object
-                                            LocatorFormData locatorFormData = new LocatorFormData();
-                                            locatorFormData.setRequestType(requestType);
-                                            locatorFormData.setStartDate(startDate);
-                                            locatorFormData.setDeparture_time(endDate);
-                                            locatorFormData.setPurpose(purpose);
-                                            locatorFormData.setRequest_status(request_status);
-                                            locatorFormData.setTransaction_date(transaction_date);
-                                            locatorFormData.setUser_id(userID);
-                                            locatorFormData.setUser_level(user_level);
-                                            locatorFormData.setFileUrl(fileUrl);
-                                            locatorFormData.setDetails(status);
+                                            RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
+                                            int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+                                            String status;
+
+                                            if (selectedRadioButtonId == R.id.officialbutton) {
+
+                                                leaveDetailsMap.put("PurposeSlip", "Official");
+
+                                            } else if (selectedRadioButtonId == R.id.personalbutton) {
+                                                leaveDetailsMap.put("PurposeSlip", "Personal");
+
+                                            } else {
+                                                // Handle the case where no radio button is selected
+                                                showToast("Please select a status");
+                                                return;
+                                            }
+
+                                            // Create a Map to represent the data structure
+                                            Map<String, Object> leaveFormData = new HashMap<>();
+                                            leaveFormData.put("AttachmentsURL", Collections.singletonList(fileUrl));
+                                            leaveFormData.put("RequestStatus", requestStatus);
+                                            leaveFormData.put("RequestType", requestType);
+
+                                            // Create a nested map for Request_Details
+                                            Map<String, Object> requestDetails = new HashMap<>();
+                                            requestDetails.put("PassSlipTime", endDate);
+                                            requestDetails.put("PassSlipDate", startDate);
+                                            requestDetails.putAll(leaveDetailsMap);
+                                            requestDetails.put("PurposeStatement", purpose);
+                                            leaveFormData.put("createdAt", FieldValue.serverTimestamp()); // Use server timestamp for createdAt
+                                            leaveFormData.put("Request_Details", requestDetails);
+                                            leaveFormData.put("documentID", null); // Firestore will automatically generate this
+                                            leaveFormData.put("employeeDocID", userID);
 
                                             // Add the request form to the Request Information collection
                                             CollectionReference requestInformationCollection = db.collection("Request Information");
-                                            requestInformationCollection.add(locatorFormData)
-                                                    .addOnSuccessListener(aVoid -> {
+                                            requestInformationCollection.add(leaveFormData)
+                                                    .addOnSuccessListener(documentReference -> {
+
+                                                        String createdDocumentId = documentReference.getId();
+                                                        documentReference.update("documentID", createdDocumentId);
+
                                                         showToast("Locator form submitted successfully");
                                                         clearFormFields();
                                                         replaceFragment(new HomeFragment());
                                                     })
                                                     .addOnFailureListener(e -> {
-                                                        showToast("Failed to submit leave form. Please try again.");
+                                                        showToast("Failed to submit Locator form. Please try again.");
                                                     });
                                         } else {
                                             showToast("User details not found");

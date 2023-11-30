@@ -1,211 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".StudyLeaveFragment">
 
-    <Button
-        android:id="@+id/uploadimage"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-
-        android:layout_alignParentStart="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="Upload image"
-        android:textSize="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.109"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/attachments_text"
-        tools:ignore="MissingConstraints" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/file_details"
-        android:layout_width="178dp"
-        android:layout_height="39dp"
-
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="260dp"
-
-
-        android:background="@drawable/custom_input"
-        android:paddingLeft="10dp"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.866"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave" />
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/Green"
-        android:paddingBottom="6dp"
-        tools:ignore="MissingConstraints">
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/uploadimage"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:text="Upload"
+            android:textSize="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintHorizontal_bias="0.109"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attachments_text"
+            tools:ignore="MissingConstraints" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/file_details"
+            android:layout_width="178dp"
+            android:layout_height="39dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/custom_input"
+            android:enabled="false"
+            android:paddingLeft="10dp"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.246"
+            app:layout_constraintStart_toEndOf="@+id/uploadimage"
+            app:layout_constraintTop_toBottomOf="@+id/radionGroup4" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/Green"
+            android:paddingBottom="6dp"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/textLeave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="156dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="8dp"
+                android:text="Leave Form"
+                android:textColor="@color/white"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/textLeave"
+            android:id="@+id/textLeaveType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="156dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            android:text="Leave Form"
-            android:textColor="@color/white"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/textLeaveType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="32dp"
-        android:text="Leave Type: "
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
-
-    <Spinner
-        android:id="@+id/spinnerLeaveType"
-        android:layout_width="200dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="32dp"
-        android:layout_toEndOf="@+id/textLeaveType"
-        android:background="@drawable/spinner_border"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
-        app:layout_constraintStart_toEndOf="@+id/textLeaveType"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
-
-    <TextView
-        android:id="@+id/inclusivedates"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textLeaveType"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:text="Inclusive Dates:"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
-
-    <TextView
-        android:id="@+id/incaseText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textLeaveType"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="152dp"
-        android:text="Details of Leave:"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
-
-
-    <RadioGroup
-        android:layout_width="250dp"
-        android:layout_height="104dp"
-        android:layout_marginStart="72dp"
-        app:layout_constraintBottom_toTopOf="@+id/attachments_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/incaseText"
-        app:layout_constraintVertical_bias="0.338">
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/comletionbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="Completion of Master's Degree"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="32dp"
+            android:text="Leave Type: "
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/incaseText"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/barboardbutton"
-            android:layout_width="258dp"
-            android:layout_height="41dp"
+        <Spinner
+            android:id="@+id/spinnerLeaveType"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="32dp"
+            android:layout_toEndOf="@+id/textLeaveType"
+            android:background="@drawable/spinner_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.428"
+            app:layout_constraintStart_toEndOf="@+id/textLeaveType"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
-            android:text="BAR/Board Examination Review"
+        <TextView
+            android:id="@+id/inclusivedates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textLeaveType"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:text="Inclusive Dates:"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
+
+        <TextView
+            android:id="@+id/incaseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textLeaveType"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="152dp"
+            android:text="Details of Leave:"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
+
+
+        <RadioGroup
+            android:id="@+id/radionGroup4"
+            android:layout_width="250dp"
+            android:layout_height="104dp"
+            android:layout_marginStart="80dp"
             app:layout_constraintBottom_toTopOf="@+id/attachments_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/comletionbutton"
-            app:layout_constraintVertical_bias="0.464"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave"
+            app:layout_constraintVertical_bias="0.612">
 
-    </RadioGroup>
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/comletionbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="Completion of Master's Degree"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/incaseText"
+                tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/attachments_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textLeaveType"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="204dp"
-        android:text="Attachments: "
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonStartDateLeave" />
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/barboardbutton"
+                android:layout_width="258dp"
+                android:layout_height="41dp"
 
-    <Button
-        android:id="@+id/buttonStartDateLeave"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/inclusivedates"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/spinner_border"
-        android:text="Start Date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.126"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inclusivedates" />
+                android:text="BAR/Board Examination Review"
+                app:layout_constraintBottom_toTopOf="@+id/attachments_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/comletionbutton"
+                app:layout_constraintVertical_bias="0.464"
+                tools:ignore="MissingConstraints" />
 
-    <Button
-        android:id="@+id/buttonEndDateLeave"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/spinnerLeaveType"
-        android:layout_toEndOf="@+id/buttonStartDateLeave"
-        android:background="@drawable/spinner_border"
-        android:text="End Date"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.448"
-        app:layout_constraintStart_toEndOf="@+id/buttonStartDateLeave"
-        app:layout_constraintTop_toBottomOf="@+id/inclusivedates"
-        app:layout_constraintVertical_bias="0.054" />
+        </RadioGroup>
 
-    <Button
-        android:id="@+id/buttonSubmit"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        <TextView
+            android:id="@+id/attachments_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textLeaveType"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="204dp"
+            android:text="Attachments: "
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonStartDateLeave" />
 
-        android:layout_alignParentStart="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"
-        android:text="Submit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.814"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/file_details" />
+        <Button
+            android:id="@+id/buttonStartDateLeave"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/inclusivedates"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/spinner_border"
+            android:text="Start Date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.126"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inclusivedates" />
+
+        <Button
+            android:id="@+id/buttonEndDateLeave"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/spinnerLeaveType"
+            android:layout_toEndOf="@+id/buttonStartDateLeave"
+            android:background="@drawable/spinner_border"
+            android:enabled="true"
+            android:text="End Date"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.358"
+            app:layout_constraintStart_toEndOf="@+id/buttonStartDateLeave"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerLeaveType"
+            app:layout_constraintVertical_bias="0.211" />
+
+        <Button
+            android:id="@+id/buttonSubmit"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="28dp"
+            android:text="Submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.828"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/file_details"
+            app:layout_constraintVertical_bias="1.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>

@@ -31,14 +31,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -177,7 +181,16 @@ public class SickLeaveFragment extends Fragment {
 
                     StudyLeaveFragment studyLeaveFragment = new StudyLeaveFragment();
                     replaceFragment(studyLeaveFragment);
-                }
+                } else if (!selectedLeaveType.equals("Sick Leave")) {
+                   // If it's not Sick Leave, Vacation Leave, or Study Leave, navigate to LeaveFormFragment
+                   Bundle bundle = new Bundle();
+                   bundle.putString("selectedLeaveType", selectedLeaveType);
+
+                   LeaveFormFragment leaveFormFragment = new LeaveFormFragment();
+                   leaveFormFragment.setArguments(bundle);
+
+                   replaceFragment(leaveFormFragment);
+               }
             }
 
             @Override
@@ -209,17 +222,15 @@ public class SickLeaveFragment extends Fragment {
 
     private void saveLeaveFormToFirestore() {
         // Get values from UI elements
-        String requestType = "Leave Form";
-        String request_status = "Pending";
-        String transaction_date = getCurrentDateTime();
-        final String[] purpose = {spinnerLeaveType.getSelectedItem().toString()};
+        String requestType = "Request Leave";
+        String requestStatus = "Pending";
+        String transactionDate = getCurrentDateTime();
+        String purpose = spinnerLeaveType.getSelectedItem().toString();
         String startDate = startdate.getText().toString();
         String endDate = enddate.getText().toString();
 
-        final String[] leave_details = {""};
-
         // Validate input
-        if (isEmpty(purpose[0]) || isEmpty(startDate) || isEmpty(endDate)) {
+        if (isEmpty(purpose) || isEmpty(startDate) || isEmpty(endDate)) {
             showToast("Please fill in all fields");
             return;
         }
@@ -238,9 +249,10 @@ public class SickLeaveFragment extends Fragment {
             // Upload the file to Firebase Storage
             fileReference.putFile(fileUri)
                     .addOnSuccessListener(taskSnapshot -> {
-
                         fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                             String fileUrl = uri.toString();
+
+                            Map<String, Object> leaveDetailsMap = new HashMap<>();
 
                             // Query the User Account collection to get user details
                             db.collection("User Account")
@@ -248,52 +260,54 @@ public class SickLeaveFragment extends Fragment {
                                     .get()
                                     .addOnSuccessListener(queryDocumentSnapshots -> {
                                         if (!queryDocumentSnapshots.isEmpty()) {
-                                            // The query contains at least one document
+                                            // User details found
                                             DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                                            String user_level = documentSnapshot.getString("UserLevel");
+                                            String userLevel = documentSnapshot.getString("UserLevel");
 
                                             RadioGroup radioGroup = getView().findViewById(R.id.radioGroup3);
                                             int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
                                             String status;
 
                                             if (selectedRadioButtonId == R.id.inhospitalbutton) {
-                                                // If "In Hospital" radio button is selected, get value from inhospitalspecify
-                                                leave_details[0] = ((TextInputEditText) getView().findViewById(R.id.inhospitalspecify)).getText().toString();
-                                                status = "In Hospital";
+
+                                                leaveDetailsMap.put("SickLeave", "In Hospital");
+                                                leaveDetailsMap.put("Illness", ((TextInputEditText) getView().findViewById(R.id.inhospitalspecify)).getText().toString());
+                                                status = "Within the Philippines";
                                             } else if (selectedRadioButtonId == R.id.outpatientbutton) {
-                                                // If "Out Patient" radio button is selected, get value from outpatientspecify
-                                                leave_details[0] = ((TextInputEditText) getView().findViewById(R.id.outpatientspecify)).getText().toString();
-                                                status = "Out Patient";
+                                                leaveDetailsMap.put("SickLeave", "Out Patient");
+                                                leaveDetailsMap.put("Illness", ((TextInputEditText) getView().findViewById(R.id.outpatientspecify)).getText().toString());
+                                                status = "Abroad";
                                             } else {
                                                 // Handle the case where no radio button is selected
                                                 showToast("Please select a status");
                                                 return;
                                             }
 
-                                            // Validate input
-                                            if (isEmpty(purpose[0]) || isEmpty(leave_details[0])) {
-                                                showToast("Please fill in all fields");
-                                                return;
-                                            }
+                                            // Create a Map to represent the data structure
+                                            Map<String, Object> leaveFormData = new HashMap<>();
+                                            leaveFormData.put("AttachmentsURL", Collections.singletonList(fileUrl));
+                                            leaveFormData.put("RequestStatus", requestStatus);
+                                            leaveFormData.put("RequestType", requestType);
 
-                                            // Create a RequestFormData object
-                                            LeaveRequestFormData leaveRequestFormData = new LeaveRequestFormData();
-                                            leaveRequestFormData.setRequestType(requestType);
-                                            leaveRequestFormData.setStartDate(startDate);
-                                            leaveRequestFormData.setEndDate(endDate);
-                                            leaveRequestFormData.setPurpose(purpose[0]);
-                                            leaveRequestFormData.setRequest_status(request_status);
-                                            leaveRequestFormData.setTransaction_date(transaction_date);
-                                            leaveRequestFormData.setUser_id(userID);
-                                            leaveRequestFormData.setUser_level(user_level);
-                                            leaveRequestFormData.setFileUrl(fileUrl);
-                                            leaveRequestFormData.setDetails_of_leave(status);
-                                            leaveRequestFormData.setSpecified(leave_details[0]);
+                                            // Create a nested map for Request_Details
+                                            Map<String, Object> requestDetails = new HashMap<>();
+                                            requestDetails.put("EndDate", endDate);
+                                            requestDetails.put("LeaveType", purpose);
+                                            requestDetails.put("StartDate", startDate);
+                                            requestDetails.putAll(leaveDetailsMap);
+                                            leaveFormData.put("createdAt", FieldValue.serverTimestamp()); // Use server timestamp for createdAt
+                                            leaveFormData.put("Request_Details", requestDetails);
+                                            leaveFormData.put("documentID", null); // Firestore will automatically generate this
+                                            leaveFormData.put("employeeDocID", userID);
 
                                             // Add the request form to the Request Information collection
                                             CollectionReference requestInformationCollection = db.collection("Request Information");
-                                            requestInformationCollection.add(leaveRequestFormData)
-                                                    .addOnSuccessListener(aVoid -> {
+                                            requestInformationCollection.add(leaveFormData)
+                                                    .addOnSuccessListener(documentReference -> {
+
+                                                        String createdDocumentId = documentReference.getId();
+                                                        documentReference.update("documentID", createdDocumentId);
+
                                                         showToast("Leave form submitted successfully");
                                                         clearFormFields();
                                                         replaceFragment(new HomeFragment());
