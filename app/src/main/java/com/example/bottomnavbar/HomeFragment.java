@@ -98,7 +98,7 @@ public class HomeFragment extends Fragment {
         if (userID != null) {
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            CollectionReference requestFormsCollection = db.collection("Request Forms");
+            CollectionReference requestFormsCollection = db.collection("Request Information");
 
 
             Query query = requestFormsCollection.whereEqualTo("user_id", userID);

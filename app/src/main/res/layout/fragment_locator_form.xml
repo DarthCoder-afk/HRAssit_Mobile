@@ -56,12 +56,26 @@
         android:layout_below="@+id/editTextPurpose"
         android:layout_alignParentStart="true"
         android:layout_marginTop="24dp"
-        android:text="Inclusive Dates:"
+        android:text="Locator Slip Details:"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.167"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextPurpose" />
+
+    <TextView
+        android:id="@+id/attachmentstxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextPurpose"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp"
+        android:text="Attachments:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.157"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <Button
         android:id="@+id/buttonStartDateLocator"
@@ -73,7 +87,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/spinner_border"
-        android:text="Start Date"
+        android:text="Date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inclusivedates" />
 
@@ -85,66 +99,88 @@
         android:layout_marginTop="60dp"
         android:layout_toEndOf="@+id/buttonStartDateLocator"
         android:background="@drawable/spinner_border"
-        android:text="End Date"
+        android:text="Departure Time"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.422"
         app:layout_constraintStart_toEndOf="@+id/buttonStartDateLocator"
         app:layout_constraintTop_toBottomOf="@+id/editTextPurpose" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editTextHeadOfficerLocator"
-        android:layout_width="330dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/buttonStartDateLocator"
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/custom_input"
-        android:hint="Head Officer"
-        android:paddingLeft="10dp"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLocator"
-        app:layout_constraintVertical_bias="0.002" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editTextReasonLocator"
-        android:layout_width="330dp"
-        android:layout_height="100dp"
-        android:layout_below="@id/editTextHeadOfficerLocator"
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/custom_input"
-        android:hint="Reason"
-        android:inputType="textLongMessage"
-        android:paddingLeft="10dp"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextHeadOfficerLocator"
-        app:layout_constraintVertical_bias="0.0" />
-
     <Button
         android:id="@+id/buttonSubmitlocator"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextReasonLocator"
+
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp"
         android:text="Submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.835"
+        app:layout_constraintHorizontal_bias="0.855"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextReasonLocator"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/file_details"
+        app:layout_constraintVertical_bias="0.148" />
+
+    <Button
+        android:id="@+id/uploadimagebtn"
+        android:layout_width="107dp"
+        android:layout_height="38dp"
+
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="276dp"
+        android:text="Upload"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.157"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/attachmentstxt"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="228dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="52dp"
+
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.557"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLocator">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/officialbutton"
+            android:layout_width="91dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="25dp"
+            android:text="Official" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/personalbutton"
+            android:layout_width="134dp"
+            android:layout_height="match_parent"
+            android:text="Personal" />
+
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/file_details"
+        android:layout_width="178dp"
+        android:layout_height="39dp"
+        android:layout_alignParentStart="true"
+
+        android:layout_centerInParent="true"
+        android:layout_marginStart="36dp"
+
+        android:layout_marginTop="68dp"
+        android:allowClickWhenDisabled="true"
+        android:background="@drawable/custom_input"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/uploadimagebtn"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        tools:ignore="MissingConstraints" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

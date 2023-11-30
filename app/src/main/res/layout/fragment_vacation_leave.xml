@@ -5,8 +5,41 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    tools:context=".LeaveFormFragment">
+    tools:context=".VacationLeaveFragment">
 
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/withinPhilippinesspecify"
+        android:layout_width="147dp"
+        android:layout_height="26dp"
+
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/custom_input"
+        android:hint="Specify Location"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/radioGroup2"
+        app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/abroadspecify"
+        android:layout_width="147dp"
+        android:layout_height="26dp"
+
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/custom_input"
+        android:hint="Specify Location"
+        android:paddingLeft="10dp"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/radioGroup2"
+        app:layout_constraintTop_toBottomOf="@+id/withinPhilippinesspecify" />
 
     <Button
         android:id="@+id/uploadimage"
@@ -15,32 +48,30 @@
 
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="316dp"
-        android:text="Upload File"
+        android:layout_marginTop="24dp"
+        android:text="Upload image"
         android:textSize="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.12"
-        app:layout_constraintStart_toStartOf="parent"
 
+        app:layout_constraintHorizontal_bias="0.109"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/attachments_text"
-        app:layout_constraintVertical_bias="1.0" />
+        tools:ignore="MissingConstraints" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/file_details"
-        android:layout_width="182dp"
-        android:layout_height="45dp"
+        android:layout_width="178dp"
+        android:layout_height="39dp"
 
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="112dp"
-        android:enabled="false"
+        android:layout_marginTop="260dp"
 
         android:background="@drawable/custom_input"
         android:paddingLeft="10dp"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.815"
+        app:layout_constraintHorizontal_bias="0.866"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonEndDateLeave" />
 
@@ -106,13 +137,62 @@
         app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
 
     <TextView
+        android:id="@+id/incaseText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textLeaveType"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="152dp"
+        android:text="Details of Leave:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textLeaveType" />
+
+
+    <RadioGroup
+        android:id="@+id/radioGroup2"
+        android:layout_width="190dp"
+        android:layout_height="98dp"
+        android:layout_marginStart="32dp"
+
+        app:layout_constraintBottom_toTopOf="@+id/attachments_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/incaseText"
+        app:layout_constraintVertical_bias="0.246"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/withinPhilippinesbutton"
+            android:layout_width="match_parent"
+            android:layout_height="41dp"
+            android:layout_marginTop="20dp"
+            android:text="Within the Philippines"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/incaseText"
+            tools:ignore="MissingConstraints" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/abroadbutton"
+            android:layout_width="169dp"
+            android:layout_height="41dp"
+            android:text="Abroad"
+            app:layout_constraintBottom_toTopOf="@+id/attachments_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/withinPhilippinesbutton"
+            app:layout_constraintVertical_bias="0.464"
+            tools:ignore="MissingConstraints" />
+
+    </RadioGroup>
+
+    <TextView
         android:id="@+id/attachments_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textLeaveType"
         android:layout_alignParentStart="true"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="204dp"
         android:text="Attachments: "
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -155,16 +235,12 @@
 
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="172dp"
+        android:layout_marginTop="28dp"
         android:text="Submit"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.749"
+        app:layout_constraintHorizontal_bias="0.814"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/file_details"
-        app:layout_constraintVertical_bias="0.703" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/file_details" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

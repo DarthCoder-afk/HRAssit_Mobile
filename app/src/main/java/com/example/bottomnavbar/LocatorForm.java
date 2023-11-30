@@ -1,6 +1,12 @@
 package com.example.bottomnavbar;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,12 +15,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,6 +37,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,10 +61,16 @@ public class LocatorForm extends Fragment {
     private String mParam2;
 
     private TextInputEditText editTextPurpose;
-    private TextInputEditText editTextHeadOfficer;
-    private TextInputEditText editTextReason;
     private Button startdate;
     private Button enddate;
+
+    private TextInputEditText fileDetailsTextView;
+
+    private StorageReference storageReference;
+
+    private Uri fileUri;
+
+    private static final int PICK_FILE_REQUEST_CODE = 1;
 
     public LocatorForm() {
         // Required empty public constructor
@@ -89,10 +109,11 @@ public class LocatorForm extends Fragment {
         View view = inflater.inflate(R.layout.fragment_locator_form, container, false);
 
         editTextPurpose = view.findViewById(R.id.editTextPurpose);
-        editTextHeadOfficer = view.findViewById(R.id.editTextHeadOfficerLocator);
-        editTextReason = view.findViewById(R.id.editTextReasonLocator);
         startdate = view.findViewById(R.id.buttonStartDateLocator);
         enddate = view.findViewById(R.id.buttonEndDateLocator);
+        fileDetailsTextView = view.findViewById(R.id.file_details);
+
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         // Inflate the layout for this fragment
 
@@ -104,6 +125,7 @@ public class LocatorForm extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Button startDateButton = view.findViewById(R.id.buttonStartDateLocator);
+        Button uploadImageButton = view.findViewById(R.id.uploadimagebtn);
         startDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,7 +137,7 @@ public class LocatorForm extends Fragment {
         endDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDatePickerDialog(endDateButton);
+                showTimePickerDialog(endDateButton);
             }
         });
 
@@ -124,6 +146,13 @@ public class LocatorForm extends Fragment {
             @Override
             public void onClick(View view) {
                 saveLeaveFormToFirestore();
+            }
+        });
+
+        uploadImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFileChooser();
             }
         });
     }
@@ -148,6 +177,31 @@ public class LocatorForm extends Fragment {
         datePickerDialog.show();
     }
 
+    private void showTimePickerDialog(final Button timeButton) {
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                requireActivity(),
+                (view, selectedHour, selectedMinute) -> {
+                    // Handle the selected time, for example:
+                    String selectedTime = formatTime(selectedHour, selectedMinute);
+                    timeButton.setText(selectedTime);
+                },
+                hour,
+                minute,
+                false // set false for 12-hour format
+        );
+        timePickerDialog.show();
+    }
+
+    private String formatTime(int hourOfDay, int minute) {
+        String timeSuffix = (hourOfDay < 12) ? "AM" : "PM";
+        int hourFormat = (hourOfDay > 12) ? (hourOfDay - 12) : hourOfDay;
+        return String.format(Locale.getDefault(), "%02d:%02d %s", hourFormat, minute, timeSuffix);
+    }
+
     private void saveLeaveFormToFirestore() {
         // Get values from UI elements
         String requestType = "Locator Form";
@@ -156,11 +210,10 @@ public class LocatorForm extends Fragment {
         String purpose = editTextPurpose.getText().toString();
         String startDate = startdate.getText().toString();
         String endDate = enddate.getText().toString(); // Get the actual end date value
-        String headOfficer = editTextHeadOfficer.getText().toString();
-        String reason = editTextReason.getText().toString();
+
 
         // Validate input
-        if (isEmpty(purpose) || isEmpty(startDate) || isEmpty(endDate) || isEmpty(headOfficer) || isEmpty(reason)) {
+        if (isEmpty(purpose) || isEmpty(startDate) || isEmpty(endDate)) {
             showToast("Please fill in all fields");
             return;
         }
@@ -173,53 +226,76 @@ public class LocatorForm extends Fragment {
             // Query the User Account collection to get user details
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            String fileName = getFileName(fileUri);
+            StorageReference fileReference = FirebaseStorage.getInstance().getReference().child("uploads/" + fileName);
 
-            db.collection("User Account")
-                    .whereEqualTo("userID", userID)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            // The query contains at least one document
-                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
 
-                            // Retrieve user details
-                            String first_name = documentSnapshot.getString("First_name");
-                            String last_name = documentSnapshot.getString("Last_name");
-                            String user_level = documentSnapshot.getString("UserLevel");
+            fileReference.putFile(fileUri)
+                    .addOnSuccessListener(taskSnapshot -> {
 
-                            // Create a RequestFormData object
-                            RequestFormData requestFormData = new RequestFormData();
-                            requestFormData.setRequestType(requestType);
-                            requestFormData.setPurpose(purpose);
-                            requestFormData.setStartDate(startDate);
-                            requestFormData.setEndDate(endDate);
-                            requestFormData.setHeadOfficer(headOfficer);
-                            requestFormData.setReason(reason);
-                            requestFormData.setRequest_status(request_status);
-                            requestFormData.setTransaction_date(transaction_date);
-                            requestFormData.setUser_id(userID);
-                            requestFormData.setFirst_name(first_name);
-                            requestFormData.setLast_name(last_name);
-                            requestFormData.setUser_level(user_level);
+                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String fileUrl = uri.toString();
 
-                            // Add the request form to the Request Forms collection
-                            CollectionReference requestFormsCollection = db.collection("Request Forms");
-                            requestFormsCollection.add(requestFormData)
-                                    .addOnSuccessListener(aVoid -> {
-                                        showToast("Locator form submitted successfully");
-                                        clearFormFields();
-                                        replaceFragment(new HomeFragment());
+                            RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
+                            int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+                            String status;
+
+                            if (selectedRadioButtonId == R.id.officialbutton) {
+                                status = "Official";
+                            } else if (selectedRadioButtonId == R.id.personalbutton) {
+                                status = "Personal";
+                            } else {
+                                // Handle the case where no radio button is selected
+                                showToast("Please select a status");
+                                return;
+                            }
+
+                            // Query the User Account collection to get user details
+                            db.collection("User Account")
+                                    .whereEqualTo("userID", userID)
+                                    .get()
+                                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                                        if (!queryDocumentSnapshots.isEmpty()) {
+                                            // The query contains at least one document
+                                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                            String user_level = documentSnapshot.getString("UserLevel");
+
+                                            // Create a RequestFormData object
+                                            LocatorFormData locatorFormData = new LocatorFormData();
+                                            locatorFormData.setRequestType(requestType);
+                                            locatorFormData.setStartDate(startDate);
+                                            locatorFormData.setDeparture_time(endDate);
+                                            locatorFormData.setPurpose(purpose);
+                                            locatorFormData.setRequest_status(request_status);
+                                            locatorFormData.setTransaction_date(transaction_date);
+                                            locatorFormData.setUser_id(userID);
+                                            locatorFormData.setUser_level(user_level);
+                                            locatorFormData.setFileUrl(fileUrl);
+                                            locatorFormData.setDetails(status);
+
+                                            // Add the request form to the Request Information collection
+                                            CollectionReference requestInformationCollection = db.collection("Request Information");
+                                            requestInformationCollection.add(locatorFormData)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        showToast("Locator form submitted successfully");
+                                                        clearFormFields();
+                                                        replaceFragment(new HomeFragment());
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        showToast("Failed to submit leave form. Please try again.");
+                                                    });
+                                        } else {
+                                            showToast("User details not found");
+                                        }
                                     })
                                     .addOnFailureListener(e -> {
-                                        showToast("Failed to submit leave form. Please try again.");
+                                        showToast("Error retrieving user details");
+                                        Log.e("Firestore", "Error retrieving user details", e);
                                     });
-                        } else {
-                            showToast("User details not found");
-                        }
+                        });
                     })
                     .addOnFailureListener(e -> {
-                        showToast("Error retrieving user details");
-                        Log.e("Firestore", "Error retrieving user details", e);
+                        showToast("Failed to upload file. Please try again.");
                     });
         } else {
             showToast("User not authenticated");
@@ -248,8 +324,7 @@ public class LocatorForm extends Fragment {
         editTextPurpose.setText("");
         startdate.setText("Start Date");
         enddate.setText("End Date");
-        editTextHeadOfficer.setText("");
-        editTextReason.setText("");
+
 
     }
 
@@ -259,5 +334,43 @@ public class LocatorForm extends Fragment {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);  // Optional: Add to back stack if needed
         fragmentTransaction.commit();
+    }
+
+    private void openFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*"); // Allow all file types
+        startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            fileUri = data.getData();
+
+            String fileName = getFileName(fileUri);
+            if (fileDetailsTextView != null) {
+                fileDetailsTextView.setText(fileName);
+            } else {
+                showToast("Error: Unable to display file name.");
+            }
+        }
+    }
+
+    @SuppressLint("Range")
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = requireActivity().getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
     }
 }

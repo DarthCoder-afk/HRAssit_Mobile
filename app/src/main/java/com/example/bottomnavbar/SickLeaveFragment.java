@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,10 +30,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -41,25 +40,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-
-
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LeaveFormFragment#newInstance} factory method to
+ * Use the {@link SickLeaveFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LeaveFormFragment extends Fragment {
+public class SickLeaveFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
-    private String leaveType;
-    private String startDate;
-    private String endDate;
-
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
     private TextInputEditText fileDetailsTextView;
     private Spinner spinnerLeaveType;
+
+    private TextInputEditText specifyillness1;
+
+    private TextInputEditText specifyillness2;
 
     private Button startdate;
     private Button enddate;
@@ -68,20 +70,13 @@ public class LeaveFormFragment extends Fragment {
 
     private Uri fileUri;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private static final String[] LEAVE_TYPES = {"Choose","Vacation Leave","Mandatory Leave", "Sick Leave", "Paternity Leave",
+    private static final String[] LEAVE_TYPES = {"Sick Leave","Vacation Leave","Mandatory Leave", "Paternity Leave",
             "Special Privilege Leave","Solo Parent Leave","Study Leave","10-Day VAWC Leave","Rehabilitation Privilege",
             "Special Leave Benefits for Women","Special Emergency (Calamity) Leave","Adoption Leave","Other"};
 
     private static final int PICK_FILE_REQUEST_CODE = 1;
 
-    public LeaveFormFragment() {
+    public SickLeaveFragment() {
         // Required empty public constructor
     }
 
@@ -91,11 +86,11 @@ public class LeaveFormFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LeaveFormFragment.
+     * @return A new instance of fragment SickLeaveFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LeaveFormFragment newInstance(String param1, String param2) {
-        LeaveFormFragment fragment = new LeaveFormFragment();
+    public static SickLeaveFragment newInstance(String param1, String param2) {
+        SickLeaveFragment fragment = new SickLeaveFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -115,7 +110,8 @@ public class LeaveFormFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_leave_form, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_sick_leave, container, false);
 
         spinnerLeaveType = view.findViewById(R.id.spinnerLeaveType);
         startdate = view.findViewById(R.id.buttonStartDateLeave);
@@ -172,11 +168,8 @@ public class LeaveFormFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selectedLeaveType = LEAVE_TYPES[position];
 
-                if (selectedLeaveType.equals("Sick Leave")) {
 
-                    SickLeaveFragment sickLeaveFragment = new SickLeaveFragment();
-                    replaceFragment(sickLeaveFragment);
-                } else if (selectedLeaveType.equals("Vacation Leave")) {
+               if (selectedLeaveType.equals("Vacation Leave")) {
 
                     VacationLeaveFragment vacationLeaveFragment = new VacationLeaveFragment();
                     replaceFragment(vacationLeaveFragment);
@@ -192,8 +185,6 @@ public class LeaveFormFragment extends Fragment {
                 // Do nothing here
             }
         });
-
-
     }
 
     private void showDatePickerDialog(final Button dateButton) {
@@ -221,12 +212,14 @@ public class LeaveFormFragment extends Fragment {
         String requestType = "Leave Form";
         String request_status = "Pending";
         String transaction_date = getCurrentDateTime();
-        String purpose = spinnerLeaveType.getSelectedItem().toString();
+        final String[] purpose = {spinnerLeaveType.getSelectedItem().toString()};
         String startDate = startdate.getText().toString();
         String endDate = enddate.getText().toString();
 
+        final String[] leave_details = {""};
+
         // Validate input
-        if (isEmpty(purpose) || isEmpty(startDate) || isEmpty(endDate)) {
+        if (isEmpty(purpose[0]) || isEmpty(startDate) || isEmpty(endDate)) {
             showToast("Please fill in all fields");
             return;
         }
@@ -259,21 +252,47 @@ public class LeaveFormFragment extends Fragment {
                                             DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                             String user_level = documentSnapshot.getString("UserLevel");
 
+                                            RadioGroup radioGroup = getView().findViewById(R.id.radioGroup3);
+                                            int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+                                            String status;
+
+                                            if (selectedRadioButtonId == R.id.inhospitalbutton) {
+                                                // If "In Hospital" radio button is selected, get value from inhospitalspecify
+                                                leave_details[0] = ((TextInputEditText) getView().findViewById(R.id.inhospitalspecify)).getText().toString();
+                                                status = "In Hospital";
+                                            } else if (selectedRadioButtonId == R.id.outpatientbutton) {
+                                                // If "Out Patient" radio button is selected, get value from outpatientspecify
+                                                leave_details[0] = ((TextInputEditText) getView().findViewById(R.id.outpatientspecify)).getText().toString();
+                                                status = "Out Patient";
+                                            } else {
+                                                // Handle the case where no radio button is selected
+                                                showToast("Please select a status");
+                                                return;
+                                            }
+
+                                            // Validate input
+                                            if (isEmpty(purpose[0]) || isEmpty(leave_details[0])) {
+                                                showToast("Please fill in all fields");
+                                                return;
+                                            }
+
                                             // Create a RequestFormData object
-                                            RequestFormData requestFormData = new RequestFormData();
-                                            requestFormData.setRequestType(requestType);
-                                            requestFormData.setStartDate(startDate);
-                                            requestFormData.setEndDate(endDate);
-                                            requestFormData.setPurpose(purpose);
-                                            requestFormData.setRequest_status(request_status);
-                                            requestFormData.setTransaction_date(transaction_date);
-                                            requestFormData.setUser_id(userID);
-                                            requestFormData.setUser_level(user_level);
-                                            requestFormData.setFileUrl(fileUrl);
+                                            LeaveRequestFormData leaveRequestFormData = new LeaveRequestFormData();
+                                            leaveRequestFormData.setRequestType(requestType);
+                                            leaveRequestFormData.setStartDate(startDate);
+                                            leaveRequestFormData.setEndDate(endDate);
+                                            leaveRequestFormData.setPurpose(purpose[0]);
+                                            leaveRequestFormData.setRequest_status(request_status);
+                                            leaveRequestFormData.setTransaction_date(transaction_date);
+                                            leaveRequestFormData.setUser_id(userID);
+                                            leaveRequestFormData.setUser_level(user_level);
+                                            leaveRequestFormData.setFileUrl(fileUrl);
+                                            leaveRequestFormData.setDetails_of_leave(status);
+                                            leaveRequestFormData.setSpecified(leave_details[0]);
 
                                             // Add the request form to the Request Information collection
                                             CollectionReference requestInformationCollection = db.collection("Request Information");
-                                            requestInformationCollection.add(requestFormData)
+                                            requestInformationCollection.add(leaveRequestFormData)
                                                     .addOnSuccessListener(aVoid -> {
                                                         showToast("Leave form submitted successfully");
                                                         clearFormFields();
@@ -299,6 +318,7 @@ public class LeaveFormFragment extends Fragment {
             showToast("User not authenticated");
         }
     }
+
 
     private boolean isEmpty(String value) {
         return value.trim().isEmpty();
@@ -369,7 +389,5 @@ public class LeaveFormFragment extends Fragment {
         }
         return result;
     }
-
-
 
 }
