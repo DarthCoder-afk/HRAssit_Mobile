@@ -30,8 +30,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -200,26 +203,36 @@ public class HomeFragment extends Fragment {
                                         showToast("Failed to load employee information. Please try again.");
                                     });
 
-                            // Query to get information from "201File Information" collection
-                            db.collection("201File Information")
-                                    .whereEqualTo("employeeDocID", documentID)
+                            db.collection("Employee Information")
+                                    .whereEqualTo("accountID", documentID)
                                     .get()
-                                    .addOnSuccessListener(employeeDocuments2 -> {
-                                        for (QueryDocumentSnapshot employeeDocument : employeeDocuments2) {
-                                            // Retrieve data from each "201File Information" document
-                                            Map<String, Object> appointmentDetails = (Map<String, Object>) employeeDocument.get("Appointment_Details");
-                                            if (appointmentDetails != null) {
-                                                String startingDate = (String) appointmentDetails.get("DateOfSigning");
-                                                Log.d(TAG, "Starting Date: " + startingDate);
-                                                showToast("Appoointment Details" + startingDate);
-                                            } else {
-                                                showToast("No appointment details found in 201File Information");
-                                            }
+                                    .addOnSuccessListener(employeeDocuments -> {
+                                        if (!employeeDocuments.isEmpty()) {
+                                            DocumentSnapshot employeeDocument = employeeDocuments.getDocuments().get(0);
+
+                                            String documentID2 = (String) employeeDocument.get("documentID");
+                                            Log.d(TAG, "Emplyee doc id" + documentID2);
+
+                                            db.collection("201File Information")
+                                                    .whereEqualTo("employeeDocID", documentID2)
+                                                    .get()
+                                                    .addOnSuccessListener(employeeDocuments2 -> {
+                                                        for (QueryDocumentSnapshot employeeDocument2 : employeeDocuments2) {
+                                                            // Retrieve data from each "201File Information" document
+                                                            Map<String, Object> appointmentDetails = (Map<String, Object>) employeeDocument2.get("Appointment_Details");
+                                                            if (appointmentDetails != null) {
+                                                                String startingDate = (String) appointmentDetails.get("DateofSigning");
+                                                                Log.d(TAG, "Starting Date: " + startingDate);
+                                                                showToast("Appointment Details" + startingDate);
+                                                                updateLeaveCredits(startingDate);
+                                                            } else {
+                                                                showToast("No appointment details found in 201File Information");
+                                                            }
+                                                        }
+                                                    });
                                         }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        showToast("Failed to load 201File information. Please try again.");
-                                    });
+                                            });
+
                         } else {
                             showToast("No document found for the user ID: " + userID);
                         }
@@ -256,6 +269,68 @@ public class HomeFragment extends Fragment {
         if (getContext() != null) {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateLeaveCredits(String startDate) {
+        // Get the current date
+        Date currentDate = new Date();
+
+        // Format the current date in "yyyy-MM-dd" format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String currentDateStr = dateFormat.format(currentDate);
+
+        // Call the calculateLeaveCredits function
+        double leaveCredits = calculateLeaveCredits(startDate, currentDateStr);
+
+        // Update the leavecreditstxt
+        total_leaveText.setText(String.format(Locale.getDefault(), "%.2f", leaveCredits));
+    }
+
+    // Function to calculate leave credits
+    private double calculateLeaveCredits(String start_date, String end_date) {
+        // Conversion tables
+        Map<Integer, Double> monthConversion = new HashMap<>();
+        monthConversion.put(1, 1.25);
+        monthConversion.put(2, 2.5);
+        monthConversion.put(3, 3.75);
+        monthConversion.put(4, 5.0);
+        monthConversion.put(5, 6.25);
+        monthConversion.put(6, 7.5);
+        monthConversion.put(7, 8.75);
+        monthConversion.put(8, 10.0);
+        monthConversion.put(9, 11.25);
+        monthConversion.put(10, 12.5);
+        monthConversion.put(11, 13.75);
+        monthConversion.put(12, 15.0);
+
+        Map<Integer, Double> dayConversion = new HashMap<>();
+        for (int i = 1; i <= 30; i++) {
+            dayConversion.put(i, i / 30.0);
+        }
+
+        // Parse start and end dates
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date startDate, endDate;
+        try {
+            startDate = dateFormat.parse(start_date);
+            endDate = dateFormat.parse(end_date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+
+        // Calculate the number of months and days worked
+        long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
+        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+        int monthsWorked = (int) diffInDays / 30;
+        int daysInLastMonth = (int) diffInDays % 30;
+
+        // Calculate leave credits
+        double leaveCredits = monthsWorked * monthConversion.get(startDate.getMonth() + 1);
+        leaveCredits += monthConversion.get(startDate.getMonth() + 1) * (daysInLastMonth / 30.0);
+
+        return leaveCredits * 2.0;  // Multiply by 2 for both vacation and sick leave
     }
 
 }
