@@ -78,8 +78,8 @@ public class HRHistory extends Fragment {
         // Initialize your list of NotificationItems
         historyItemList = new ArrayList<>();
         // Add sample data, replace this with your actual data
-        historyItemList.add(new HistoryItem("12/15/2023", "You approved a leave form"));
-        historyItemList.add(new HistoryItem("12/17/2023", "You declined a locator form"));
+        //historyItemList.add(new HistoryItem("12/15/2023", "You approved a leave form"));
+        //historyItemList.add(new HistoryItem("12/17/2023", "You declined a locator form"));
 
 
         recyclerviewAdapter = new HistoryAdapter(historyItemList, getActivity());

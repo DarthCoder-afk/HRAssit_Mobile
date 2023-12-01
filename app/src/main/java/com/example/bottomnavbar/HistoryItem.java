@@ -5,9 +5,12 @@ public class HistoryItem {
     private String date;
     private String content;
 
-    public HistoryItem(String date, String content) {
+    private String documentId;  // Add this field
+
+    public HistoryItem(String date, String content, String documentId) {
         this.date = date;
         this.content = content;
+        this.documentId = documentId;
     }
 
     public String getDate() {
@@ -16,5 +19,9 @@ public class HistoryItem {
 
     public String getContent() {
         return content;
+    }
+
+    public String getDocumentId() {
+        return documentId;
     }
 }
