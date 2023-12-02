@@ -8,13 +8,16 @@ public class RequestItem {
 
     private String requestType;
 
+    private String documentID;
 
-    public RequestItem(String date, int userProfileImage, String request_username, String position, String requestType) {
+
+    public RequestItem(String date, int userProfileImage, String request_username, String position, String requestType,String documentID) {
         this.request_date = date;
         this.userProfileImage = userProfileImage;
         this.request_username = request_username;
         this.position = position;
         this.requestType = requestType;
+        this.documentID = documentID;
 
     }
 
@@ -38,5 +41,10 @@ public class RequestItem {
         return position;
     }
 
-
+    public void setRequest_username(String request_username) {
+        this.request_username = request_username;
+    }
+    public String getDocumentId() {
+        return documentID;
+    }
 }

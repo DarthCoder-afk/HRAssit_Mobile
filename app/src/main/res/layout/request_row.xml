@@ -75,32 +75,10 @@
             android:layout_height="wrap_content"
             android:layout_alignEnd="@+id/Employeenametxt"
             android:layout_alignBottom="@+id/Employeenametxt"
-            android:layout_marginEnd="101dp"
-            android:layout_marginBottom="-11dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="-10dp"
             android:src="@drawable/baseline_remove_red_eye_24"
-            app:tint="@color/lightgreen"/>
-
-        <ImageView
-            android:id="@+id/Approveinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/ViewInfo"
-            android:layout_alignBottom="@+id/Employeenametxt"
-            android:layout_marginEnd="-41dp"
-            android:layout_marginBottom="-12dp"
-            android:src="@drawable/baseline_check_24"
-            app:tint="@color/Green"/>
-
-        <ImageView
-            android:id="@+id/DeclineInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/Approveinfo"
-            android:layout_alignBottom="@+id/Employeenametxt"
-            android:layout_marginEnd="-41dp"
-            android:layout_marginBottom="-12dp"
-            android:src="@drawable/baseline_clear_24"
-            app:tint="@color/red" />
+            app:tint="@color/lightgreen" />
 
 
     </RelativeLayout>

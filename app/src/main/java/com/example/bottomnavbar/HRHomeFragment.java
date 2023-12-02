@@ -1,5 +1,7 @@
 package com.example.bottomnavbar;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
@@ -17,13 +19,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +47,8 @@ public class HRHomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerviewAdapter recyclerviewAdapter;
     private List<EmployeeItem> employeeItemList;
+
+    private String fullName;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -133,7 +140,7 @@ public class HRHomeFragment extends Fragment {
                     });
 
             //Counter for number of employees
-            db.collection("Request Forms")
+            db.collection("Request Information")
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -182,25 +189,57 @@ public class HRHomeFragment extends Fragment {
                         showToast("Failed to load username. Please try again.");
                     });
 
-            db.collection("Request Forms")
-                    .whereEqualTo("request_status", "Pending")
+            db.collection("Request Information")
+                    .whereEqualTo("RequestStatus", "Pending")
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+
                             employeeItemList = new ArrayList<>();
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String date = document.getString("transaction_date");
-                                String employee_firstname = document.getString("first_name");
-                                String employee_lastname = document.getString("last_name");
-                                String request_type = document.getString("requestType");
-                                String position = document.getString("user_level");
-                                String status = document.getString("request_status");
 
-                                String fullName = employee_firstname + " " + employee_lastname;
+                                String employeeDocID = document.getString("employeeDocID");
+                                Timestamp timestamp = document.getTimestamp("createdAt");
+                                Date date = timestamp != null ? timestamp.toDate() : null;
+                                String dateString = date != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date) : "";
+
+                                String request_type = document.getString("RequestType");
+                                //String position = document.getString("user_level");
+                                String status = document.getString("RequestStatus");
+
+                                Map<String, Object> requestDetails = (Map<String, Object>) document.get("Request_Details");
+                                String leaveType = requestDetails != null ? (String) requestDetails.get("LeaveType") : "";
+
+                                //String fullName = employee_firstname + " " + employee_lastname;
                                 String purpose_text = String.format("An employee submitted a %s", request_type);
 
-                                employeeItemList.add(new EmployeeItem(date, R.drawable.user, fullName, position, purpose_text, status));
+                                employeeItemList.add(new EmployeeItem(dateString, R.drawable.user, fullName, "Employee", purpose_text, status));
+
+                                db.collection("Employee Information")
+                                        .whereEqualTo("documentID", employeeDocID)
+                                        .get()
+                                        .addOnSuccessListener(employeeDocuments -> {
+                                            if (!employeeDocuments.isEmpty()) {
+                                                DocumentSnapshot employeeDocument = employeeDocuments.getDocuments().get(0);
+
+
+                                                Map<String, Object> personalInfo = (Map<String, Object>) employeeDocument.get("Personal_Information");
+                                                if (personalInfo != null) {
+                                                    String firstName = (String) personalInfo.get("FirstName");
+                                                    String surname = (String) personalInfo.get("SurName");
+                                                    //String userLevel = (String) personalInfo.get("UserLevel");
+
+                                                    // Use retrieved data as needed
+                                                    fullName = firstName + " " + surname;
+                                                    usernameText.setText(firstName);
+
+                                                    showToast("Employee information loaded successfully");
+                                                } else {
+                                                    showToast("No personal information found in Employee Information");
+                                                }
+
+                                            }});
                             }
                             recyclerView = view.findViewById(R.id.recyclerView);
                             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

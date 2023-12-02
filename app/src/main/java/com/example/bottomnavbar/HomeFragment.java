@@ -178,7 +178,7 @@ public class HomeFragment extends Fragment {
                                             DocumentSnapshot employeeDocument = employeeDocuments.getDocuments().get(0);
 
                                             String documentID2 = (String) employeeDocument.get("documentID");
-                                            Log.d(TAG,"Emplyee doc id"+documentID2);
+                                            Log.d(TAG,"Employee doc id"+documentID2);
 
                                             // Retrieve data from the "Employee Information" document
                                             Map<String, Object> personalInfo = (Map<String, Object>) employeeDocument.get("Personal_Information");

@@ -1,6 +1,7 @@
 package com.example.bottomnavbar;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,109 +12,160 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link HREmployeeRequests#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HREmployeeRequests extends Fragment {
+public class HREmployeeRequests extends Fragment implements OnItemClickListener {
+
+    private static final String TAG = "HREmployeeRequests";
 
     private RecyclerView recyclerView;
     private RequestRecyclerViewAdapter recyclerviewAdapter;
     private List<RequestItem> requestItemList;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String fullName;
 
     public HREmployeeRequests() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HREmployeeRequests.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HREmployeeRequests newInstance(String param1, String param2) {
-        HREmployeeRequests fragment = new HREmployeeRequests();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static HREmployeeRequests newInstance() {
+        return new HREmployeeRequests();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_h_r_employee_requests, container, false);
 
+        recyclerView = view.findViewById(R.id.request_form);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            db.collection("Request Forms")
-                    .whereEqualTo("request_status", "Pending")
+            db.collection("Request Information")
+                    .whereEqualTo("RequestStatus", "Pending")
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             requestItemList = new ArrayList<>();
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                String employeeDocID = document.getString("employeeDocID");
+                                Timestamp timestamp = document.getTimestamp("createdAt");
+                                Date date = timestamp != null ? timestamp.toDate() : null;
+                                String dateString = date != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date) : "";
 
-                                String date = document.getString("transaction_date");
-                                String request_type = document.getString("requestType");
-                                String status = document.getString("request_status");
-                                String employee_firstname = document.getString("first_name");
-                                String employee_lastname = document.getString("last_name");
-                                String position = document.getString("user_level");
+                                String request_type = document.getString("RequestType");
 
-                                String fullName = employee_firstname + " " + employee_lastname;
+                                requestItemList.add(new RequestItem(dateString, R.drawable.user, fullName, "Employee", request_type, ""));
 
-                                requestItemList.add(new RequestItem(date,R.drawable.user,fullName,position, request_type));
+                                db.collection("Employee Information")
+                                        .whereEqualTo("documentID", employeeDocID)
+                                        .get()
+                                        .addOnSuccessListener(employeeDocuments -> {
+                                            if (!employeeDocuments.isEmpty()) {
+                                                DocumentSnapshot employeeDocument = employeeDocuments.getDocuments().get(0);
+
+                                                Map<String, Object> personalInfo = (Map<String, Object>) employeeDocument.get("Personal_Information");
+                                                if (personalInfo != null) {
+                                                    String firstName = (String) personalInfo.get("FirstName");
+                                                    String surname = (String) personalInfo.get("SurName");
+                                                    fullName = firstName + " " + surname;
+
+                                                    showToast("Employee information loaded successfully");
+
+                                                    // Initialize and set up the adapter after data is loaded
+                                                    recyclerviewAdapter = new RequestRecyclerViewAdapter(requestItemList, getActivity());
+                                                    recyclerView.setAdapter(recyclerviewAdapter);
+                                                    recyclerviewAdapter.setOnItemClickListener(HREmployeeRequests.this);
+
+                                                    // Notify the adapter that the data has changed
+                                                    recyclerviewAdapter.notifyDataSetChanged();
+                                                } else {
+                                                    showToast("No personal information found in Employee Information");
+                                                }
+                                            }
+                                        });
                             }
-                            recyclerView = view.findViewById(R.id.request_form);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                            recyclerviewAdapter = new RequestRecyclerViewAdapter(requestItemList, getActivity());
-                            recyclerView.setAdapter(recyclerviewAdapter);
-
                         } else {
-                            Log.e("Firestore", "Error getting documents: ", task.getException());
+                            Log.e(TAG, "Error getting documents: ", task.getException());
                         }
                     });
         }
-
         return view;
+    }
+
+    private void showToast(String message) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        RequestItem requestItem = requestItemList.get(position);
+        showDetailsDialog(requestItem, position);
+    }
+
+    private void showDetailsDialog(RequestItem requestItem, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Details")
+                .setMessage("Date: " + requestItem.getRequest_date() + "\nContent: " + requestItem.getRequestType())
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton("Remove", (dialog, which) -> {
+                    // Remove the item from the RecyclerView and Firebase
+                    removeItem(position);
+                })
+                .show();
+    }
+
+    private void removeItem(int position) {
+        // Get the document ID of the corresponding item in Firebase
+        String documentId = getDocumentId(position);
+
+        // Remove the item from the RecyclerView
+        requestItemList.remove(position);
+        recyclerviewAdapter.notifyItemRemoved(position);
+
+        // Remove the item from the Firebase collection
+        if (documentId != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference requestFormsCollection = db.collection("Request Information");
+
+            requestFormsCollection.document(documentId)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted"))
+                    .addOnFailureListener(e -> Log.e(TAG, "Error deleting document", e));
+        }
+    }
+
+    private String getDocumentId(int position) {
+        // Get the document ID of the corresponding item in Firebase
+        if (position >= 0 && position < requestItemList.size()) {
+            // Replace with the actual method to get the document ID
+            return ""; // Adjust according to your implementation
+        }
+        return null;
     }
 }

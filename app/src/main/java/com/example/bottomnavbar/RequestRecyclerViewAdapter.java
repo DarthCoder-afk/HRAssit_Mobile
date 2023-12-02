@@ -8,8 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -18,19 +16,21 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
 
     private List<RequestItem> requestList;
     private Context context;
+    private OnItemClickListener listener;
 
     public RequestRecyclerViewAdapter(List<RequestItem> requestList, Context context) {
         this.requestList = requestList;
         this.context = context;
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
     public RequestRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.request_row, parent, false);
-
+        View view = LayoutInflater.from(context).inflate(R.layout.request_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -47,19 +47,14 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         holder.viewInfoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle the click event here
-                // You can navigate to the RequestDetailsFragment
-
-                // Example: Start a new fragment transaction
-                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.hr_frame_layout, new RequestDetails());
-                transaction.addToBackStack(null);
-                transaction.commit();
+                if (listener != null) {
+                    int position = holder.getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(position);
+                    }
+                }
             }
         });
-
-
-
     }
 
     @Override
